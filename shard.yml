@@ -1,0 +1,15 @@
+name: alizarin
+version: 0.1.0
+
+description: |
+  Writes Linux GUI applications using Web Technologies. Extending JavaScript with native functionalities.
+
+authors:
+  - TheEEs <visualbasic2013@hotmail.com>
+
+crystal: 0.33.0
+
+libraries:
+  libwebkit2gtk: "4.0"
+
+license: MIT
