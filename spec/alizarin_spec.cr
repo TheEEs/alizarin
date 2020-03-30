@@ -2,15 +2,30 @@ require "./spec_helper"
 
 describe WebView do
   it "writes body innerHTML to a file using native function" do
-    script_finish = CHANNEL.receive
-    JSC.is_string(script_finish).should be_truthy
-    path = String.new JSC.to_string(script_finish)
-    script_finish = CHANNEL.receive
-    JSC.is_string(script_finish).should be_truthy
-    inner_html = String.new JSC.to_string script_finish
-    File.exists?(path).should be_truthy
-    file_content = File.read path
-    file_content.should eq inner_html
+    WEBVIEW.load_url "https://crystal-lang.org"
+    path = "./htmlBody.txt"
+    wait_for_page_fully_loaded
+    eval_js "writeHTMLBodyToFile('#{path}')"
+    result = script_result
+    JSC.is_string(result).should be_truthy
+    eval_js "document.body.innerHTML"
+    result = script_result
+    JSC.is_string(result).should be_truthy
+    innerHTML = String.new JSC.to_string result
+    fileContent = File.read path
+    innerHTML.should eq fileContent
+  end
+
+  it "loads raw html" do
+    WEBVIEW.load_html <<-HTML
+      <h1>Hello</h1>
+    HTML
+    wait_for_page_fully_loaded
+    eval_js "document.body.innerHTML"
+    result = script_result
+    JSC.is_string(result).should be_truthy
+    innerHTML = String.new JSC.to_string result
+    innerHTML.should eq "<h1>Hello</h1>"
   end
 end
 

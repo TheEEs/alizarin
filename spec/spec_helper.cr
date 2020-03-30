@@ -2,28 +2,44 @@ require "spec"
 require "file_utils"
 require "../src/alizarin"
 
-CHANNEL = Channel(JSC::JSValue).new
+macro wait_for_page_fully_loaded
+  ACK.receive
+end
+
+macro eval_js(js)
+  COMMAND_CHANNEL.send {{js}}
+end
+
+macro script_result
+  RESULT_CHANNEL.receive
+end
+
+RESULT_CHANNEL  = Channel(JSC::JSValue).new
+COMMAND_CHANNEL = Channel(String).new
+ACK             = Channel(Nil).new
 
 WEBVIEW = WebView.new
 WEBVIEW.extension_dir = "./webExtensions/"
 WEBVIEW.when_document_loaded do |webview|
-  webview.execute_javascript "writeHTMLBodyToFile('./htmlBody.txt')"
-  webview.execute_javascript "document.body.innerHTML"
+  ACK.send(nil)
 end
 WEBVIEW.when_script_finished do |js_value|
-  puts "Script execution finished".colorize(:green)
-  CHANNEL.send js_value
+  RESULT_CHANNEL.send js_value
 end
 WEBVIEW.title = "Alizarin"
 WEBVIEW.default_size(800, 600)
-WEBVIEW.load_url "https://crystal-lang.org"
 WEBVIEW.on_close do
 end
 
 spawn do
-  100.times do |i|
-    WEBVIEW.run false do
-      Fiber.yield
-    end
+  loop do
+    command = COMMAND_CHANNEL.receive
+    WEBVIEW.execute_javascript command
+  end
+end
+
+spawn do
+  WEBVIEW.run false do
+    Fiber.yield
   end
 end
