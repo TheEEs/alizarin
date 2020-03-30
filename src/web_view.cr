@@ -74,6 +74,11 @@ class WebView
     LibWebKit.webview_load_uri @browser, url
   end
 
+  
+  def load_html(html : String,base_url : String?)
+    LibWebKit.webview_load_html @browser, html, base_url
+  end
+
   # Specifies callback called when browser window close. Usually useds to close process.
   #
   # ```

@@ -39,7 +39,9 @@ lib LibWebKit
   fun connect_signal = g_signal_connect_data(widget : GtkWidget, event : LibC::Char*, callback : GtkCallback,
                                              data : Pointer(Void), destroy_data : Void*, flags : GtkGConnectFlags)
 
-  fun set_title = gtk_window_set_title(w : GtkWindow, t : UInt8*)  fun webview_load_uri = webkit_web_view_load_uri(webview : GtkWebKitWebView, uri : LibC::Char*)
+  fun set_title = gtk_window_set_title(w : GtkWindow, t : UInt8*)
+  fun webview_load_uri = webkit_web_view_load_uri(webview : GtkWebKitWebView, uri : LibC::Char*)
+  fun webview_load_html = webkit_web_view_load_html(webview : GtkWebKitWebView, html : LibC::Char*, base_url : LibC::Char*)
   fun widget_focus = gtk_widget_grab_focus(widget : GtkWidget)
   fun get_webview_settings = webkit_web_view_get_settings(webview : GtkWebKitWebView) : GtkWebSettings
   fun get_web_inspector = webkit_web_view_get_inspector(webview : GtkWebKitWebView) : GtkWebInspector
