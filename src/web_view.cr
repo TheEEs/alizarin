@@ -74,8 +74,11 @@ class WebView
     LibWebKit.webview_load_uri @browser, url
   end
 
-  
-  def load_html(html : String,base_url : String? = nil)
+  # Loads raw *html*
+  #
+  # If *base_url* is provided and not nil, all relative paths in *html* will relative to *base_url*.
+  # All absolute paths will also have to start with *base_url* because of security reasons. If not, Web Process might crash.
+  def load_html(html : String, base_url : String? = nil)
     LibWebKit.webview_load_html @browser, html, base_url
   end
 
