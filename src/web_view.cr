@@ -30,7 +30,7 @@ class WebView
   # ```
   # NOTE: If this method is used, it should be executed as soon as possible. A good practice is to place it right after `.new`.
   def extension_dir=(directory : String)
-    @extension_dir = path
+    @extension_dir = directory
     LibWebKit.connect_signal LibWebKit.get_default_web_context, "initialize-web-extensions", (->(ctx : Void*, data : Void*, c : Void*) {
       default_ctx = LibWebKit.get_default_web_context
       LibWebKit.set_extensions_directory default_ctx, ctx.as(UInt8*)
@@ -75,7 +75,7 @@ class WebView
   end
 
   
-  def load_html(html : String,base_url : String?)
+  def load_html(html : String,base_url : String? = nil)
     LibWebKit.webview_load_html @browser, html, base_url
   end
 
@@ -130,7 +130,7 @@ class WebView
   def run(blocking : Bool, &block : WebView -> Nil)
     LibWebKit.show_window @window
     while LibWebKit.start_gtk_main_iter(blocking)
-      b.call self
+      block.call self
     end
   end
 
@@ -142,7 +142,7 @@ class WebView
   # end
   # ```
   def execute_javascript(js_code : String)
-    LibWebKit.eval_js @browser, js, nil,
+    LibWebKit.eval_js @browser, js_code, nil,
       LibWebKit::GAsyncReadyCallback.new { |object, result, user_data|
         res = LibWebKit.script_finish_result object, result, nil
         if res.null?
