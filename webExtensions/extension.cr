@@ -1,4 +1,4 @@
-require "../src/libs/macros"
+require "../src/alizarin"
 include WebExtension
 
 initialize_extension do
