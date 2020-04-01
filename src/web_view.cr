@@ -137,7 +137,7 @@ class WebView
     end
   end
 
-  # Asynchronously executes JavaScriptCode. After *js_code* has been successfully executed, the callback passed to `#when_script_finished` will be called.
+  # Asynchronously executes *js_code*. After *js_code* has been successfully executed, the callback passed to `#when_script_finished` will be called.
   #
   # ```
   # webview.when_document_loaded |w|
@@ -156,6 +156,32 @@ class WebView
         webview = Box(WebView).unbox(user_data)
         webview.run_script_finish_callback jsc_value
       }, Box.box(self)
+  end
+
+  # Asynchronously executes *js_code*, *block* will be called instead of the callback passed to `#when_script_finished`.
+  #
+  # This method is useful in situations in which one needs to evaluate returned value of specific JavaScript code, for example:
+  # ```
+  # webview.when_document_loaded do
+  #   webview.execute_javascript "document.title" do |value|
+  #     webview.title = String.new(JSC.to_string value)
+  #   end
+  # end
+  # ```
+  # NOTE: *block* receives a Pointer(Void) as its argument, it's considered unsafe.
+  def execute_javascript(js_code : String, &block : JSC::JSValue -> Nil)
+    LibWebKit.eval_js @browser, js_code, nil,
+      LibWebKit::GAsyncReadyCallback.new { |object, result, user_data|
+        res = LibWebKit.script_finish_result object, result, nil
+        if res.null?
+          puts "JavaScript execution has cause error(s)".colorize(:red).on(:black)
+          return
+        end
+        jsc_value = LibWebKit.get_jsc_from_js_result res
+        data = Box(JSC::JSValue -> Nil).unbox(user_data)
+        b = data
+        b.call jsc_value
+      }, Box.box(block)
   end
 
   # Specifies a callback which will be called each time a script executed by `#execute_javascript` finishes.
