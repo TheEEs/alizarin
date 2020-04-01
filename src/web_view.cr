@@ -206,5 +206,6 @@ class WebView
 
   protected def destroy_browser
     LibWebKit.destroy_widget @browser
+    LibWebKit.destroy_widget @window
   end
 end
