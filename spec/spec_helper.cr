@@ -27,7 +27,7 @@ WEBVIEW.when_script_finished do |js_value|
   RESULT_CHANNEL.send js_value
 end
 WEBVIEW.title = "Alizarin"
-WEBVIEW.default_size(800, 600)
+WEBVIEW.window_size(800, 600)
 WEBVIEW.on_close do
 end
 
