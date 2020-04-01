@@ -1,5 +1,5 @@
 name: alizarin
-version: 0.1.0
+version: 0.1.1
 
 description: |
   Writes Linux GUI applications using Web Technologies. Extending JavaScript with native functionalities.
