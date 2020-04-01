@@ -37,12 +37,12 @@ class WebView
     }), @extension_dir.to_unsafe, nil, LibWebKit::GtkGConnectFlags::All
   end
 
-  # Set default size of browser window
+  # Set size of browser window
   #
   # ```
-  # webview.default_size 800, 600
+  # webview.window_size 800, 600
   # ```
-  def default_size(width : UInt32, height : UInt32)
+  def window_size(width : UInt32, height : UInt32)
     LibWebKit.set_default_window_size @window, width, height
   end
 
