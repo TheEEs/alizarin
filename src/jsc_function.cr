@@ -26,8 +26,8 @@ struct JSCFunction
     # @@box_of_fun << box
     @value = JSC.new_function JSCPrimative.global_context,
       name, ->(p : JSC::JSCValues*, box : Void*) {
-      proc = Box(CallBack).unbox box
-      proc.call(JSCFunction.parse_args(p.value)).to_unsafe
+      proc = Box(typeof(func)).unbox box
+      proc.call(JSCFunction.parse_args(p.value)).to_jsc
     }, box, nil, JSC.jsc_value_get_type
   end
 
