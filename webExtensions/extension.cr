@@ -10,8 +10,14 @@ initialize_extension do
     path = params.first.to_s
     bodyHTML = JSCContext.get_value("document")["body"]["innerHTML"]
     File.write path, bodyHTML.to_s
-    JSCPrimative.new path
+    !path.empty? ? path : nil
   end
 
   JSCContext.set_value "writeHTMLBodyToFile", func
+
+  func = function params do
+    StaticArray[1, 2, 3, 5]
+  end
+
+  JSCContext.set_value "getArray", func
 end
