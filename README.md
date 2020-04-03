@@ -9,6 +9,9 @@
 
 **Alizarin** is a Crystal shard that helps you build Linux GUI applications using Web Technologies (HTML5, CSS3, JavaScript). This shard also provides ability to extend JavaScript code with native functionalities.
 
+## Examples
+  [Markdown - A markdown editor written with Alizarin](https://github.com/TheEEs/markdown.git)
+
 ## Installation
 
 * Add the dependency to your `shard.yml`:
