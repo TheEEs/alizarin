@@ -85,6 +85,11 @@ module JSObjectUtils
   end
 
   # :nodoc:
+  def to_jsc
+    @value
+  end
+
+  # :nodoc:
   def to_unsafe
     @value
   end

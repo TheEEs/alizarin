@@ -68,11 +68,16 @@ module WebExtension
   # func = function p do
   #   puts typeof(p) # => Array(JSCFunction|JSCObject|JSCPrimative)
   #   JSCPrimative.new true # JavaScript's true
-  #   # Because this block expects a union of (JSCFunction|JSCObject|JSCPrimative) returned.
+  #   # Developers can return anything as long as it has method to_jsc() : JSC::JSValue
   # end
   macro function(arg_name)
-    JSCFunction.new JSCFunction::CallBack.new { |{{arg_name}}|
+    JSCFunction.new ->({{arg_name}} : Array(JSCPrimative | JSCFunction | JSCObject)) { 
       {{ yield }}
     }
+  end
+
+  # JavaScript `undefined`
+  macro undefined
+    JSCPrimative.new 
   end
 end
