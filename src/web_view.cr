@@ -76,7 +76,7 @@ class WebView
 
   # Loads raw *html*
   #
-  # If *base_url* is provided and not nil, all relative paths in *html* will relative to *base_url*.
+  # If *base_url* is a `String`, all relative paths in *html* will be resolved against *base_url*.
   # All absolute paths will also have to start with *base_url* because of security reasons. If not, Web Process might crash.
   def load_html(html : String, base_url : String? = nil)
     LibWebKit.webview_load_html @browser, html, base_url
@@ -137,6 +137,15 @@ class WebView
     end
   end
 
+  # Set WebView's fullscreen state, passing `true` makes the webview fullscreen, otherwise. 
+  def full_screen(state : Bool)
+    if state 
+      LibWebKit.full_screen @window 
+    else 
+      LibWebKit.unfull_screen @window
+    end
+  end
+
   # Asynchronously executes *js_code*. After *js_code* has been successfully executed, the callback passed to `#when_script_finished` will be called.
   #
   # ```
@@ -168,7 +177,7 @@ class WebView
   #   end
   # end
   # ```
-  # NOTE: *block* receives a Pointer(Void) as its argument, it's considered unsafe.
+  # NOTE: *block* receives a `Pointer(Void)` as its argument, so it's considered unsafe.
   def execute_javascript(js_code : String, &block : JSC::JSValue -> Nil)
     LibWebKit.eval_js @browser, js_code, nil,
       LibWebKit::GAsyncReadyCallback.new { |object, result, user_data|

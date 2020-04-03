@@ -38,6 +38,8 @@ spawn do
   end
 end
 
+WEBVIEW.full_screen true
+
 spawn do
   WEBVIEW.run false do
     Fiber.yield

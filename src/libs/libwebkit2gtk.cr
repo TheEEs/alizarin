@@ -56,4 +56,6 @@ lib LibWebKit
   fun eval_js = webkit_web_view_run_javascript(webview : GtkWebKitWebView, script : LibC::Char*, cancellable : Void*, callback : GAsyncReadyCallback, user_data : Void*)
   fun script_finish_result = webkit_web_view_run_javascript_finish(webview : GtkWebKitWebView, result : Void*, errors : Void**) : WebKitJavaScriptResult
   fun get_jsc_from_js_result = webkit_javascript_result_get_js_value(result : WebKitJavaScriptResult) : JSC::JSValue
+  fun full_screen = gtk_window_fullscreen(window : GtkWindow)
+  fun unfull_screen = gtk_window_unfullscreen(window : GtkWindow)
 end
