@@ -38,6 +38,13 @@ describe WebView do
     end
     channel.receive.should eq "Example Domain"
   end
+
+  it "should get an array from function call to getArray" do
+    eval_js "getArray()"
+    ret = script_result
+    JSC.is_array(ret).should be_truthy
+    String.new(JSC.to_string(ret)).should eq "1,2,3,5"
+  end
 end
 
 exit 0
