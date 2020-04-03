@@ -137,11 +137,11 @@ class WebView
     end
   end
 
-  # Set WebView's fullscreen state, passing `true` makes the webview fullscreen, otherwise. 
+  # Set WebView's fullscreen state, passing `true` makes the webview fullscreen, otherwise.
   def full_screen(state : Bool)
-    if state 
-      LibWebKit.full_screen @window 
-    else 
+    if state
+      LibWebKit.full_screen @window
+    else
       LibWebKit.unfull_screen @window
     end
   end
