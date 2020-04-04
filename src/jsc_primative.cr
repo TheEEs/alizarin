@@ -1,10 +1,9 @@
-# A JSCPrimative is a wrapper of 6 JavaScript primative types, includes:
+# A JSCPrimative is a wrapper of 5 JavaScript primative types, includes:
 # 1. undefined
 # 2. null
 # 3. boolean
 # 4. number
 # 5. string
-# 6. array
 struct JSCPrimative
   include JSObjectUtils
 
@@ -44,11 +43,6 @@ struct JSCPrimative
   # Initializes a new JavaScript boolean from a Crystal's Bool
   def initialize(value : Bool)
     @value = JSC.new_bool @@global_context, value
-  end
-
-  # :nodoc:
-  def initialize(values : Pointer(JSC::JSValue))
-    @value = JSC.new_array @@global_context, values
   end
 
   # Initializes a new JavaScript undefined

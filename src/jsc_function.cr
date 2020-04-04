@@ -21,6 +21,7 @@ struct JSCFunction
   # WebExtension.function params do
   #   params.first # => Directly returns function parameter(s) is not recommended and may crash program
   # end
+  # ```
   def initialize(func : Array(JSCPrimative | JSCFunction | JSCObject) -> _, name : String? = nil)
     box = Box.box(func)
     # @@box_of_fun << box
