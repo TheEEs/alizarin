@@ -13,7 +13,7 @@ class WebView
   # Get extension directory
   getter extension_dir
 
-  # Get this `WebView` UUID. This is helpful in case of communicating between Web Process and Render Process
+  # Get this `WebView`'s UUID. This is helpful in case of communicating between Web Process and Render Process
   getter uuid 
 
   # Initializes a new instance of `WebView`
