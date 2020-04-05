@@ -1,13 +1,13 @@
 # This module provides common operations that every JavaScript entity can do
 module JSObjectUtils
   # Set property `name`
-  def []=(name : String, value : JSCPrimative | JSCFunction | JSCObject)
-    JSC.set_property @value, name, value.to_unsafe
+  def []=(name : String, value)
+    JSC.set_property @value, name, value.to_jsc
   end
 
   # Set a value at index `index`
-  def []=(index : UInt32, value : JSCPrimative | JSCFunction | JSCObject)
-    JSC.set_at_index @value, index, value.to_unsafe
+  def []=(index : UInt32, value)
+    JSC.set_at_index @value, index, value.to_jsc
   end
 
   # Gets property `name`
