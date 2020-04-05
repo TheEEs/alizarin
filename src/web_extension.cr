@@ -12,10 +12,10 @@
 #   func = function params do
 #     if params.size != 1
 #       JSCFunction.raise "#{params.size} parameter(s) provided, expect 1"
-#       JSCPrimative.new # return JavaScript's undefined
+#       undefined
 #     else
 #       path = params.first.to_s
-#       JSCPrimative.new(File.read(path)) rescue JSCPrimative.new nil # Return content of file at *path*, otherwise return null
+#       File.read(path) rescue nil # Return content of file at *path*, otherwise return JS's null
 #     end
 #   end
 #   JSCContext.set_value("read_file", func)
