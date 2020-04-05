@@ -4,9 +4,9 @@ struct JSCObject
   # An `Accessor` can have both setter and getter, either, or even none.
   # ```
   # require "uuid"
-  # uuid = JSCObject.new 
+  # uuid = JSCObject.new
   # uuid_get_only_accessor = JSCObject::Accessor(String).new name: "random"
-  # uuid.get do 
+  # uuid.get do
   #   UUID.random
   # end
   # uuid.mount_accessor uuid_get_only_accessor
