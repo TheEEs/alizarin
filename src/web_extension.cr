@@ -38,14 +38,28 @@
 # 4. `JSCObject`
 # 5. `JSObjectUtils`
 module WebExtension
+  @@uuid = ""
+
+  # :nodoc:
+  protected def self.set_uuid(uuid)
+    @@uuid = uuid
+  end
+
+  # Gets UUID hex string of the `WebView` which loads this extension 
+  def self.uuid
+    @@uuid 
+  end
+
   # Entry point of a Web Extension shared library
   macro initialize_extension
-    fun webkit_web_extension_initialize(%ext : LibWebKit2Extension::WebKitWebExtension)
+    fun webkit_web_extension_initialize_with_user_data(%ext : LibWebKit2Extension::WebKitWebExtension, user_data : Void*)
       GC.init
       %arg = "TheEEs<visualbasic2013@hotmail.com>"
       %args = StaticArray(UInt8*, 1).new(%arg.to_unsafe)
       LibCrystalMain.__crystal_main(1, %args.to_unsafe)
       puts "Webkit Extension initialized".colorize(:green)
+      %uuid_ptr = LibWebKit2Extension.g_variant_get_string(user_data, nil)
+      WebExtension.set_uuid String.new(%uuid_ptr)
       LibWebKit.connect_signal %ext, "page-created", (->(%ext : Void*, %page : Void*, %data : Void*) {
         puts "WebkitWebPage is loaded".colorize(:green)  
         %script_world = LibWebKit2Extension.get_default_script_world

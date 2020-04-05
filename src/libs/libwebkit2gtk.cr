@@ -63,4 +63,8 @@ lib LibWebKit
   fun reload = webkit_web_view_reload(webview : GtkWebKitWebView)
   fun reload_without_cache = webkit_web_view_reload_bypass_cache(webview : GtkWebKitWebView)
   fun webkit_web_view_get_estimated_load_progress(webview : GtkWebKitWebView) : Float64
+  fun set_extension_init_data = webkit_web_context_set_web_extensions_initialization_user_data(
+    context : GtkWebContext, data : Void*
+  )
+  fun g_variant_new_string(string : LibC::Char*) : Void*
 end

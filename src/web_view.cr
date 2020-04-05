@@ -1,3 +1,4 @@
+require "uuid"
 LibWebKit.gtk_init(nil, nil)
 
 # A `WebView` is a class which represents a WebKit2GTK browser window.
@@ -12,12 +13,16 @@ class WebView
   # Get extension directory
   getter extension_dir
 
+  # Get this `WebView` UUID. This is helpful in case of communicating between Web Process and Render Process
+  getter uuid 
+
   # Initializes a new instance of `WebView`
   def initialize
     @window = LibWebKit.new_window LibWebKit::GTKWindowType::TOP_LEVEL
     @scroll_panel = LibWebKit.new_scrollable_container nil, nil
     @browser = LibWebKit.create_web_view
     @settings = LibWebKit.get_webview_settings @browser
+    @uuid = UUID.random
     LibWebKit.add_view_to_parent @window, @scroll_panel
     LibWebKit.add_view_to_parent @scroll_panel, @browser
   end
@@ -31,10 +36,16 @@ class WebView
   # NOTE: If this method is used, it should be executed as soon as possible. A good practice is to place it right after `.new`.
   def extension_dir=(directory : String)
     @extension_dir = directory
-    LibWebKit.connect_signal LibWebKit.get_default_web_context, "initialize-web-extensions", (->(ctx : Void*, data : Void*, c : Void*) {
+    boxed_data = Box.box({@extension_dir, @uuid.hexstring})
+    LibWebKit.connect_signal LibWebKit.get_default_web_context, "initialize-web-extensions", (->(user_data : Void*, data : Void*, data1 : Void*) {
       default_ctx = LibWebKit.get_default_web_context
-      LibWebKit.set_extensions_directory default_ctx, ctx.as(UInt8*)
-    }), @extension_dir.to_unsafe, nil, LibWebKit::GtkGConnectFlags::All
+      unboxed_data = Box({String, String}).unbox(user_data)
+      extension_dir = unboxed_data[0]
+      uuid = unboxed_data[1]
+      LibWebKit.set_extensions_directory default_ctx, extension_dir
+      LibWebKit.set_extension_init_data default_ctx,
+        LibWebKit.g_variant_new_string uuid
+    }), boxed_data, nil, LibWebKit::GtkGConnectFlags::All
   end
 
   # Set size of browser window
