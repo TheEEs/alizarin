@@ -86,4 +86,38 @@ module WebExtension
   macro undefined
     JSCPrimative.new 
   end
+
+  # :nodoc:
+  def self.js_new(constructor, *args)
+    params = Pointer(JSC::JSValue).malloc(args.size)
+    args.size.times do |i|
+      params[i] = args[i].to_jsc
+    end
+    ret = JSC.jsc_value_constructor_callv(constructor.to_jsc, args.size, params)
+    return begin
+      if JSC.is_function(ret)
+        JSCFunction.new ret
+      elsif JSC.is_object(ret)
+        JSCObject.new ret
+      else
+        JSCPrimative.new ret
+      end
+    end
+  end
+
+  # JavaScript's `new` operator, returns `JSCPrimative | JSCFunction | JSCObject`
+  #
+  # ```
+  # include WebExtension
+  # promise = JSCContext.get_value("Promise")
+  # new Promise, function p {
+  #   resolve = p.first.as(JSCFunction)
+  #   spawn do
+  #     1000.times{ sleep 0.1 }
+  #     resolve.call true
+  #   end
+  # }
+  macro new(constructor, *args)
+    WebExtension.js_new {{constructor}},{{*args}}
+  end
 end

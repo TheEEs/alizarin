@@ -44,4 +44,8 @@ initialize_extension do
   object.define_property "string", "hello", JSCObject::Accessor::Accessibility::All
 
   JSCContext.set_value "my_object", object
+
+  my_birthday_code = new(JSCContext.get_value("Number"), 7498)
+
+  JSCContext.set_value "my_birthday_code", my_birthday_code
 end

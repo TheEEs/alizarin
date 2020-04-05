@@ -73,4 +73,6 @@ lib JSC
     flags : Int32, # JSCValuePropertyFlags,
     value : JSValue
   )
+
+  fun jsc_value_constructor_callv(constructor : JSValue, n_params : UInt32, params : JSValue*) : JSValue
 end

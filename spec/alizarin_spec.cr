@@ -66,6 +66,13 @@ describe WebView do
     ret = script_result
     String.new(JSC.to_string(ret)).should eq "hello"
   end
+
+  it "should get my birthday code" do
+    eval_js "my_birthday_code"
+    ret = script_result
+    JSC.is_object(ret).should be_truthy
+    JSC.to_int32(ret).should eq 7498
+  end
 end
 
 exit 0
