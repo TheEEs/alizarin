@@ -17,8 +17,8 @@ module JSCContext
   # ```
   # JSCContext.set_value "hello", JSCPrimative.new "world"
   # ```
-  def self.set_value(name : String, value : JSCPrimative | JSCFunction | JSCObject)
-    JSC.context_set_value @@context, name, value
+  def self.set_value(name : String, value)
+    JSC.context_set_value @@context, name, value.to_jsc
   end
 
   # Equivalent to JavaScript `window[name]`

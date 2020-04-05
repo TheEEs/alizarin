@@ -66,7 +66,7 @@ struct JSCFunction
   def call(*args)
     first_arg = Pointer(JSC::JSValue).malloc(args.size)
     args.size.times do |i|
-      (first_arg + i).value = args[i].to_unsafe
+      (first_arg + i).value = args[i].to_jsc
     end
     ret = JSC.invoke_function @value, args.size, first_arg
     return case JSC
