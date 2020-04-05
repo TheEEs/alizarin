@@ -2,6 +2,17 @@ struct JSCObject
   # An `Accessor` represents a JavaScript object's property which is defined via JS `Object.defineProperty`
   # An `Accessor` can define its own setter or getter via `Accessor#get(&block)` and `Accessor#set(&block)`.
   # An `Accessor` can have both setter and getter, either, or even none.
+  # ```
+  # require "uuid"
+  # uuid = JSCObject.new 
+  # uuid_get_only_accessor = JSCObject::Accessor(String).new name: "random"
+  # uuid.get do 
+  #   UUID.random
+  # end
+  # uuid.mount_accessor uuid_get_only_accessor
+  # JSCContext.set_value "UUID", uuid
+  # ```
+  # In WebInspector, types `UUID.random`
   class Accessor(T)
     # Accessibility specifics how a JavaScript property can be accessed
     @[Flags]
