@@ -58,4 +58,9 @@ lib LibWebKit
   fun get_jsc_from_js_result = webkit_javascript_result_get_js_value(result : WebKitJavaScriptResult) : JSC::JSValue
   fun full_screen = gtk_window_fullscreen(window : GtkWindow)
   fun unfull_screen = gtk_window_unfullscreen(window : GtkWindow)
+  fun go_back = webkit_web_view_go_back(webview : GtkWebKitWebView)
+  fun go_forward = webkit_web_view_go_forward(webview : GtkWebKitWebView)
+  fun reload = webkit_web_view_reload(webview : GtkWebKitWebView)
+  fun reload_without_cache = webkit_web_view_reload_bypass_cache(webview : GtkWebKitWebView)
+  fun webkit_web_view_get_estimated_load_progress(webview : GtkWebKitWebView) : Float64
 end

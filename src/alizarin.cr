@@ -10,5 +10,5 @@ require "./web_extension"
 require "./language_extensions/**"
 
 module Alizarin
-    VERSION = `shards version #{__DIR__}/../`
+  VERSION = `shards version #{__DIR__}/../`
 end

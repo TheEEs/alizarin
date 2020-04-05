@@ -193,6 +193,47 @@ class WebView
       }, Box.box(block)
   end
 
+  # Loads the previous web page.
+  def go_back
+    LibWebKit.go_back @browser
+  end
+
+  # Loads the next web page.
+  def go_forward
+    LibWebKit.go_forward @browser
+  end
+
+  # Reloads current content of this `WebView`.
+  def reload
+    LibWebKit.reload @browser
+  end
+
+  # Reloads current content of this `WebView` without re-using any cached data.
+  def reload_without_cache
+    LibWebKit.reload_without_cache @browser
+  end
+
+  # Specifies a callback called each time `WebView` load progress changes.
+  # 
+  # E.g:
+  # ```
+  # webview.on_load_process_changed do |progress|
+  #   # progress ranges from 0.0 to 1.0
+  #   puts "Loading #{(progress * 100).round(2).colorize(:green)}"
+  # end
+  # ```
+  def on_load_process_changed(&block : Float64 -> _)
+    data = Box.box({@browser, block})
+    LibWebKit.connect_signal @browser,
+      "notify::estimated-load-progress",
+      (->(data : Void*, data1 : Void*, data2 : Void*) {
+        user_data = Box({LibWebKit::GtkWebKitWebView, typeof(block)}).unbox data
+        webview = user_data[0]
+        cb = user_data[1]
+        cb.call LibWebKit.webkit_web_view_get_estimated_load_progress webview
+      }), data, nil, LibWebKit::GtkGConnectFlags::All
+  end
+
   # Specifies a callback which will be called each time a script executed by `#execute_javascript` finishes.
   # The callback *b* receives a `Pointer(Void)` as parameter that points to result of the executed JS code.
   # For example:

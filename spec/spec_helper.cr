@@ -21,12 +21,19 @@ ACK             = Channel(Nil).new
 WEBVIEW = WebView.new
 
 WEBVIEW.extension_dir = "./webExtensions/"
+
 WEBVIEW.when_document_loaded do |webview|
   ACK.send(nil)
 end
+
 WEBVIEW.when_script_finished do |js_value|
   RESULT_CHANNEL.send js_value
 end
+
+WEBVIEW.on_load_process_changed do |progress|
+  puts "Loading #{progress.colorize(:green)}"
+end
+
 WEBVIEW.title = "Alizarin"
 WEBVIEW.window_size(800, 600)
 WEBVIEW.on_close do
