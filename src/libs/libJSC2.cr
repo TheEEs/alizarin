@@ -7,6 +7,13 @@ lib JSC
     len : LibC::UInt
   end
 
+  @[Flags]
+  enum JSCValuePropertyFlags
+    CONFIGURABLE
+    ENUMERABLE
+    WRITABLE
+  end
+
   RETURN_TYPE = jsc_value_get_type
 
   alias JSValue = Void*
@@ -53,4 +60,17 @@ lib JSC
   fun throw_exception = jsc_context_throw(context : JSContext, message : LibC::Char*)
   fun context_set_value = jsc_context_set_value(context : JSContext, name : LibC::Char*, value : JSValue)
   fun context_get_value = jsc_context_get_value(context : JSContext, name : LibC::Char*) : JSValue
+  fun define_accessor = jsc_value_object_define_property_accessor(
+    object : JSValue, property_name : LibC::Char*, flag : JSCValuePropertyFlags,
+    property_type : LibC::ULong,
+    getter : Void* -> JSValue,
+    setter : Void* -> Void,
+    userdata : Void*, destroy_notify : Void*
+  )
+  fun define_property = jsc_value_object_define_property_data(
+    object : JSValue,
+    property_name : LibC::Char*,
+    flags : Int32,#JSCValuePropertyFlags,
+    value : JSValue
+  )
 end
