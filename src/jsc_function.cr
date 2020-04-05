@@ -61,7 +61,7 @@ struct JSCFunction
   #
   # E.g:
   # ```
-  # sum_function.call JSCPrimative.new(1), JSCPrimative.new(2)
+  # sum_function.call JSCPrimative.new(1), 2
   # ```
   def call(*args)
     first_arg = Pointer(JSC::JSValue).malloc(args.size)
