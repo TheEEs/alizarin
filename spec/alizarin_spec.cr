@@ -61,7 +61,7 @@ describe WebView do
     JSC.is_null(ret).should be_truthy
   end
 
-  it "my_object.string should eq to 'hello'" do 
+  it "my_object.string should eq to 'hello'" do
     eval_js "my_object.string"
     ret = script_result
     String.new(JSC.to_string(ret)).should eq "hello"

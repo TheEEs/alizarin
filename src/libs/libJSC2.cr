@@ -70,7 +70,7 @@ lib JSC
   fun define_property = jsc_value_object_define_property_data(
     object : JSValue,
     property_name : LibC::Char*,
-    flags : Int32,#JSCValuePropertyFlags,
+    flags : Int32, # JSCValuePropertyFlags,
     value : JSValue
   )
 end

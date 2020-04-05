@@ -22,7 +22,7 @@ struct JSCObject
   end
 
   # Defines a JavaScript object's property, this is equal to JavaScript `Object.defineProperty`.
-  # See `Accessor` for more. 
+  # See `Accessor` for more.
   def mount_accessor(accessor : Accessor)
     globalObject = JSCContext.get_value "Object"
     defineProperty = globalObject["defineProperty"].as(JSCFunction)
@@ -40,7 +40,7 @@ struct JSCObject
     defineProperty.call(@value, accessor.name, propertyObject)
   end
 
-  # Defines a JavaScript object's property, this is equal to JavaScript `Object.defineProperty`. 
+  # Defines a JavaScript object's property, this is equal to JavaScript `Object.defineProperty`.
   def define_property(name, value, flags : Accessor::Accessibility)
     JSC.define_property(@value, name, flags, value.to_jsc)
   end
