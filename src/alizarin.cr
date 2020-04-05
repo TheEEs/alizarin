@@ -8,3 +8,7 @@ require "./jsc_function"
 require "./jsc_context"
 require "./web_extension"
 require "./language_extensions/**"
+
+module Alizarin
+    VERSION = `shards version #{__DIR__}/../`
+end
