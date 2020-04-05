@@ -45,6 +45,27 @@ describe WebView do
     JSC.is_array(ret).should be_truthy
     String.new(JSC.to_string(ret)).should eq "1,2,3,5"
   end
+
+  it "plays with object's accessor" do
+    number = 120
+    eval_js "my_object.number = #{number}"
+    script_result
+    eval_js "my_object.number"
+    ret = script_result
+    JSC.is_number(ret).should be_truthy
+    JSC.to_int32(ret).should eq number
+    eval_js "my_object.number = 'Hello'"
+    script_result
+    eval_js "my_object.number"
+    ret = script_result
+    JSC.is_null(ret).should be_truthy
+  end
+
+  it "my_object.string should eq to 'hello'" do 
+    eval_js "my_object.string"
+    ret = script_result
+    String.new(JSC.to_string(ret)).should eq "hello"
+  end
 end
 
 exit 0

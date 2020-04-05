@@ -19,6 +19,7 @@ COMMAND_CHANNEL = Channel(String).new
 ACK             = Channel(Nil).new
 
 WEBVIEW = WebView.new
+
 WEBVIEW.extension_dir = "./webExtensions/"
 WEBVIEW.when_document_loaded do |webview|
   ACK.send(nil)
@@ -41,6 +42,8 @@ end
 # WEBVIEW.full_screen true
 
 spawn do
+  WEBVIEW["enable-developer-extras"] = true
+  WEBVIEW.show_inspector
   WEBVIEW.run false do
     Fiber.yield
   end
