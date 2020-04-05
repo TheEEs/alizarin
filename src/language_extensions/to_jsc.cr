@@ -44,6 +44,7 @@ struct StaticArray(T, N)
   end
 end
 
+# :nodoc:
 struct Pointer(T)
   def to_jsc
     self
