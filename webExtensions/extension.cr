@@ -20,4 +20,28 @@ initialize_extension do
   end
 
   JSCContext.set_value "getArray", func
+
+  propertyNumber = 0
+
+  object = JSCObject.new
+
+  accessor = JSCObject::Accessor(Int32?).new "number"
+
+  accessor.get do
+    propertyNumber
+  end
+
+  accessor.set do |value|
+    if value.is_number?
+      propertyNumber = value.to_i32
+    else
+      propertyNumber = nil
+    end
+  end
+
+  object.mount_accessor accessor
+
+  object.define_property "string", "hello", JSCObject::Accessor::Accessibility::All
+
+  JSCContext.set_value "my_object", object
 end
