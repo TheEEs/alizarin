@@ -68,11 +68,11 @@ module WebExtension
   # func = function p do
   #   puts typeof(p) # => Array(JSCFunction|JSCObject|JSCPrimative)
   #   # Developers can return anything as long as it has method to_jsc() : JSC::JSValue
-  #   if p.size != 0 
+  #   if p.size != 0
   #     JSCPrimative.new true
   #   else
-  #     false 
-  #   else 
+  #     false
+  #   else
   #   # return type is (JSCPrimative|Bool), it's ok because both JSCPrimative and Bool have method to_jsc()
   # end
   # ```
