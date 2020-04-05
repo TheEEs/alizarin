@@ -214,7 +214,7 @@ class WebView
   end
 
   # Specifies a callback called each time `WebView` load progress changes.
-  # 
+  #
   # E.g:
   # ```
   # webview.on_load_process_changed do |progress|
