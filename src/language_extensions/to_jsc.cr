@@ -44,6 +44,11 @@ struct StaticArray(T, N)
   end
 end
 
+struct Pointer(T)
+  def to_jsc
+    self
+  end
+end
 
 {% for bits in {8, 16, 32, 64} %}
     {% for prefix in {:UInt, :Int} %}
