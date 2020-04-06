@@ -185,9 +185,9 @@ class WebView
       while connection = @server.try &.accept?
         spawn self.handle_connection(connection)
       end
-    }
+    } if ipc?
     while LibWebKit.start_gtk_main_iter(blocking)
-      Fiber.yield
+      Fiber.yield if ipc?
       block.call self
     end
   end
