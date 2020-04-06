@@ -45,9 +45,9 @@ module WebExtension
     @@uuid = uuid
   end
 
-  # Gets UUID hex string of the `WebView` which loads this extension 
+  # Gets UUID hex string of the `WebView` which loads this extension
   def self.uuid
-    @@uuid 
+    @@uuid
   end
 
   # Entry point of a Web Extension shared library

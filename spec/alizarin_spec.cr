@@ -1,4 +1,18 @@
 require "./spec_helper"
+require "socket"
+require "colorize"
+
+def handle_client(client)
+  value = client.gets
+  puts value
+end
+
+socket = UNIXServer.new("/tmp/alizarin.sock")
+while client = socket.accept?
+  spawn handle_client(client)
+end
+
+client = UNIXSocket.new("/tmp/alizarin.sock")
 
 describe WebView do
   it "writes body innerHTML to a file using native function" do

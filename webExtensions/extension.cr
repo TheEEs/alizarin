@@ -2,9 +2,8 @@ require "../src/alizarin"
 include WebExtension
 
 initialize_extension do
-  
   puts WebExtension.uuid
-  
+
   func = function params do
     if params.size != 1
       JSCFunction.raise "Expect only one arguments, #{params.size} given"

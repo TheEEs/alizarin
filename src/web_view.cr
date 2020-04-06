@@ -1,12 +1,22 @@
 require "uuid"
+require "socket"
+
 LibWebKit.gtk_init(nil, nil)
 
 # A `WebView` is a class which represents a WebKit2GTK browser window.
 # It allows developers to display HTML contents, execute JavaScript code.
 class WebView
+  # :nodoc:
+  macro ipc_socket_file_path(path)
+    "/tmp/alizarin#{ {{path}} }.sock"
+  end
+
   @script_finish_callback = Pointer(Void).null
   @document_loaded_callback = Pointer(Void).null
   @extension_dir : String = ""
+  @server : UNIXServer? = nil
+  @on_ipc_message_received: (String -> Nil) | Nil = nil
+
 
   alias Callback = WebView -> Void
 
@@ -14,15 +24,19 @@ class WebView
   getter extension_dir
 
   # Get this `WebView`'s UUID. This is helpful in case of communicating between Web Process and Render Process
-  getter uuid 
+  getter uuid
 
-  # Initializes a new instance of `WebView`
-  def initialize
+  # Specifies whether if `WebView` is running on IPC mode or not.
+  getter? ipc
+
+  # Initializes a new instance of `WebView`, whether this `WebView` should use *ipc* mode or not.
+  def initialize(@ipc : Bool = false)
     @window = LibWebKit.new_window LibWebKit::GTKWindowType::TOP_LEVEL
     @scroll_panel = LibWebKit.new_scrollable_container nil, nil
     @browser = LibWebKit.create_web_view
     @settings = LibWebKit.get_webview_settings @browser
     @uuid = UUID.random
+    @server = UNIXServer.new ipc_socket_file_path(@uuid.hexstring) if @ipc
     LibWebKit.add_view_to_parent @window, @scroll_panel
     LibWebKit.add_view_to_parent @scroll_panel, @browser
   end
@@ -108,8 +122,14 @@ class WebView
       webview = data[0]
       callback = data[1]
       webview.destroy_browser
+      webview.close_ipc_socket if webview.ipc?
       callback.call webview
     }, @box, nil, LibWebKit::GtkGConnectFlags::All
+  end
+
+  # :nodoc:
+  protected def close_ipc_socket
+    @server.try &.close
   end
 
   # Shows WebKit's WebInspector.
@@ -125,8 +145,25 @@ class WebView
   # puts "Good bye" # This line will only be executed after webview main loop is destroyed.
   # ```
   def run
-    LibWebKit.show_window @window
-    LibWebKit.start_gtk_main_loop
+    if ipc?
+      LibWebKit.show_window @window
+      spawn {
+        while connection = @server.try &.accept?
+          spawn self.handle_connection(connection)
+        end
+      }
+      while LibWebKit.start_gtk_main_iter(false)
+        Fiber.yield
+      end
+    else
+      LibWebKit.show_window @window
+      LibWebKit.start_gtk_main_loop
+    end
+  end
+
+  # Speficies a callback which will be called eachtime a IPC message is send from Render Process (e.g : via JavaScript)
+  def when_ipc_message_received(&block : String -> Nil)
+    @on_ipc_message_received = block
   end
 
   # Run browser window. This method receives a *block* which lets developers do some logics at each webview's iteration.
@@ -141,10 +178,25 @@ class WebView
   #   a += 1
   # end
   # ```
+  # NOTE: **IMPORTANT** : Uses this method carefully when `WebView` is running on IPC mode.
+  # Some concurrent operations such as `Channel#receive` may cause the `WebView` blocked infinitely.
   def run(blocking : Bool, &block : WebView -> Nil)
     LibWebKit.show_window @window
+    spawn {
+      while connection = @server.try &.accept?
+        spawn self.handle_connection(connection)
+      end
+    }
     while LibWebKit.start_gtk_main_iter(blocking)
+      Fiber.yield
       block.call self
+    end
+  end
+
+  # :nodoc:
+  private def handle_connection(connection)
+    while message = connection.gets
+      @on_ipc_message_received.try &.call(message)
     end
   end
 
