@@ -15,8 +15,7 @@ class WebView
   @document_loaded_callback = Pointer(Void).null
   @extension_dir : String = ""
   @server : UNIXServer? = nil
-  @on_ipc_message_received: (String -> Nil) | Nil = nil
-
+  @on_ipc_message_received : (String -> Nil) | Nil = nil
 
   alias Callback = WebView -> Void
 
