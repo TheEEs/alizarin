@@ -160,7 +160,7 @@ class WebView
     end
   end
 
-  # Speficies a callback which will be called eachtime a IPC message is send from Render Process (e.g : via JavaScript)
+  # Specifies a callback which will be called eachtime a IPC message is send from Render Process (e.g : via JavaScript)
   def when_ipc_message_received(&block : String -> Nil)
     @on_ipc_message_received = block
   end
