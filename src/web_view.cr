@@ -1,6 +1,3 @@
-require "uuid"
-require "socket"
-
 LibWebKit.gtk_init(nil, nil)
 
 # A `WebView` is a class which represents a WebKit2GTK browser window.
@@ -129,6 +126,11 @@ class WebView
   # :nodoc:
   protected def close_ipc_socket
     @server.try &.close
+  end
+
+  # Stops ipc listening on the `WebView`
+  def stop_ipc
+    self.close_ipc_socket
   end
 
   # Shows WebKit's WebInspector.

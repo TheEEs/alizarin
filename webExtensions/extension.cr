@@ -2,7 +2,7 @@ require "../src/alizarin"
 include WebExtension
 
 initialize_extension do
-  puts WebExtension.uuid
+  IPC.init
 
   func = function params do
     if params.size != 1
@@ -50,4 +50,11 @@ initialize_extension do
   my_birthday_code = new(JSCContext.get_value("Number"), 7498)
 
   JSCContext.set_value "my_birthday_code", my_birthday_code
+
+  ipc = function p do
+    IPC.send p.first.to_s
+    true
+  end
+
+  JSCContext.set_value "ipc", ipc
 end
