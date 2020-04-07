@@ -17,8 +17,9 @@ end
 RESULT_CHANNEL  = Channel(JSC::JSValue).new
 COMMAND_CHANNEL = Channel(String).new
 ACK             = Channel(Nil).new
+IPC_CHANNEL     = Channel(String).new
 
-WEBVIEW = WebView.new
+WEBVIEW = WebView.new(ipc: true)
 
 WEBVIEW.extension_dir = "./webExtensions/"
 
@@ -32,6 +33,10 @@ end
 
 WEBVIEW.on_load_process_changed do |progress|
   puts "Loading #{progress.colorize(:green)}"
+end
+
+WEBVIEW.when_ipc_message_received do |message|
+  IPC_CHANNEL.send(message)
 end
 
 WEBVIEW.title = "Alizarin"
@@ -51,7 +56,5 @@ end
 spawn do
   WEBVIEW["enable-developer-extras"] = true
   WEBVIEW.show_inspector
-  WEBVIEW.run false do
-    Fiber.yield
-  end
+  WEBVIEW.run
 end

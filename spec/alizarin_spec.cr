@@ -75,6 +75,13 @@ describe WebView do
     JSC.is_object(ret).should be_truthy
     JSC.to_int32(ret).should eq 7498
   end
-end
 
-exit 0
+  it "should get IPC message via JavaScript call" do
+    WEBVIEW.execute_javascript "ipc('Hello')" { }
+    value = IPC_CHANNEL.receive
+    value.should eq "Hello"
+    WEBVIEW.stop_ipc
+    File.exists?(WebView.ipc_socket_file_path(WEBVIEW.uuid.hexstring)).should be_falsey
+  end
+  
+end
