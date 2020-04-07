@@ -5,6 +5,7 @@ struct JSCObject
   @value : JSC::JSValue = Pointer(Void).null
 
   include JSObjectUtils
+  include Invokable
 
   # :nodoc:
   macro global_context

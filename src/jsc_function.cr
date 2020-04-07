@@ -1,7 +1,9 @@
 # JSCFunction represents a JavaScript's native function(a function that run native code instead of javascript).
 struct JSCFunction
   include JSObjectUtils
-
+  include Invokable
+  @this : JSC::JSValue = JSC::JSValue.null
+  @name : String? = nil
   @@global_context : LibWebKit2Extension::WebKitJSContext = Pointer(Void).null
 
   alias CallBack = Array(JSCPrimative | JSCFunction | JSCObject) -> JSCFunction | JSCPrimative | JSCObject

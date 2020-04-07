@@ -6,6 +6,7 @@
 # 5. string
 struct JSCPrimative
   include JSObjectUtils
+  include Invokable
 
   @@global_context : LibWebKit2Extension::WebKitJSContext = Pointer(Void).null
   @value : JSC::JSValue = Pointer(Void).null
