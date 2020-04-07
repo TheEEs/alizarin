@@ -57,4 +57,10 @@ initialize_extension do
   end
 
   JSCContext.set_value "ipc", ipc
+
+  test_eval = function p do
+    WebExtension.eval "1 + 1"
+  end
+
+  JSCContext.set_value "test_eval", test_eval
 end

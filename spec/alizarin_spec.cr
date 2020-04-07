@@ -76,6 +76,12 @@ describe WebView do
     JSC.to_int32(ret).should eq 7498
   end
 
+  it "test_eval function should return 2" do
+    eval_js "test_eval()"
+    ret = script_result
+    JSC.to_int32(ret).should eq 2
+  end
+
   it "should get IPC message via JavaScript call" do
     WEBVIEW.execute_javascript "ipc('Hello')" { }
     value = IPC_CHANNEL.receive

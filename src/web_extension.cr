@@ -134,4 +134,16 @@ module WebExtension
   macro new(constructor, *args)
     WebExtension.js_new {{constructor}},{{*args}}
   end
+
+  # Evaluates *js* and gets the result back.
+  def self.eval(js : String)
+    v = JSC.eval_js JSCContext.global_context, js, -1
+    if JSC.is_function(v)
+      JSCFunction.new v
+    elsif JSC.is_object(v)
+      JSCObject.new v
+    else
+      JSCPrimative.new v
+    end
+  end
 end

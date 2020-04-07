@@ -73,6 +73,6 @@ lib JSC
     flags : Int32, # JSCValuePropertyFlags,
     value : JSValue
   )
-
+  fun eval_js = jsc_context_evaluate(context : JSContext, code : UInt8*, size : LibC::Long) : JSValue
   fun jsc_value_constructor_callv(constructor : JSValue, n_params : UInt32, params : JSValue*) : JSValue
 end
