@@ -65,7 +65,7 @@ struct JSCFunction
   # ```
   # sum_function.call JSCPrimative.new(1), 2
   # ```
-  # NOTE: Calling function this way won't make JS `this` operator usable. In case of 
+  # NOTE: Calling function this way won't make JS `this` operator usable. In case of
   # invoking object's method, uses `Invokable#invoke` instead.
   def call(*args)
     first_arg = Pointer(JSC::JSValue).malloc(args.size)
