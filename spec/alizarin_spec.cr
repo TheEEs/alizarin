@@ -83,5 +83,4 @@ describe WebView do
     WEBVIEW.stop_ipc
     File.exists?(WebView.ipc_socket_file_path(WEBVIEW.uuid.hexstring)).should be_falsey
   end
-  
 end

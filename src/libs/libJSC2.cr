@@ -50,7 +50,7 @@ lib JSC
   fun get_at_index = jsc_value_object_get_property_at_index(js_value : JSValue, index : UInt32) : JSValue
   fun has_property = jsc_value_object_has_property(js_value : JSValue, name : LibC::Char*) : Bool
   fun delete_property = jsc_value_object_delete_property(js_value : JSValue, name : LibC::Char*) : Bool
-  fun property_names = jsc_value_object_enumerate_properties(js_value : JSValue) : LibC::Char**
+  fun properties = jsc_value_object_enumerate_properties(js_value : JSValue) : LibC::Char**
   fun invoke_member_function = jsc_value_object_invoke_methodv(js_value : JSValue, method_name : LibC::Char*, n_params : UInt32, params : Pointer(JSValue)) : JSValue
   fun new_function = jsc_value_new_function_variadic(context : JSContext, name : LibC::Char*,
                                                      callback : JSFunctionCallback,

@@ -195,6 +195,11 @@ class WebView
   end
 
   # :nodoc:
+  def gtk_window_handler
+    @window
+  end
+
+  # :nodoc:
   private def handle_connection(connection)
     while message = connection.gets
       @on_ipc_message_received.try &.call(message)
