@@ -7,9 +7,9 @@
 # ```
 # require "alizarin"
 # include WebExtension
-# initialize_extension do 
+# initialize_extension do
 #   WebExtension::IPC.init
-#   ipc = function do p
+#   ipc = function p do
 #     WebExtension::IPC.send p.first.to_s
 #   end
 #   JSCContext.set_value "ipc", ipc
@@ -18,18 +18,17 @@
 # #### main.cr
 # ```
 # require "alizarin"
-# webview = WebView.new ipc: true #makes sure to set `ipc: true` to make WebView run in IPC mode
+# webview = WebView.new ipc: true # makes sure to set `ipc: true` to make WebView run in IPC mode
 # webview.when_ipc_message_received do |message|
 #   case message
 #   when ...
-#   when ...
-#   # and so on
+#   when ... # and so on
 #   end
-# end 
+# end
 # webview.load_html <<-HTML
 #   <h1>Hello</h1>
 # HTML
-# webview.run 
+# webview.run
 # ```
 module WebExtension::IPC
   @@ipc : UNIXSocket? = nil
