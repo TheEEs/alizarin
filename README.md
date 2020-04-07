@@ -61,7 +61,7 @@ require "alizarin"
 ```
 
 
-NOTE: There is also a simple test case located in `/spec` folder. This test opens a browser window, loads [Crystal Offical Website](https://crystal-lang.org/) then writes page `body.innerHTML` into a file called `./htmlBody.txt`.
+NOTE: There is also test cases located in `/spec` folder.
 
 To run test case, types:
 ```shell
