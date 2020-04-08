@@ -1,6 +1,7 @@
 require "./spec_helper"
 require "socket"
 require "colorize"
+require "json"
 
 describe WebView do
   it "writes body innerHTML to a file using native function" do
@@ -74,6 +75,19 @@ describe WebView do
     ret = script_result
     JSC.is_object(ret).should be_truthy
     JSC.to_int32(ret).should eq 7498
+  end
+
+  it "asserts value of namedTupleToJSC" do
+    eval_js "JSON.stringify(namedTupleToJSC())"
+    ret = String.new JSC.to_string(script_result)
+    {
+      age:   21,
+      songs: [
+        {
+          name: "A song of ice and fire",
+        },
+      ],
+    }.to_json.should eq ret
   end
 
   it "test_eval function should return 2" do

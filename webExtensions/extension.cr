@@ -65,4 +65,15 @@ initialize_extension do
   end
 
   JSCContext.set_value "test_eval", test_eval
+
+  JSCContext.set_value "namedTupleToJSC", (function p do
+    {
+      age:   21,
+      songs: StaticArray[
+        {
+          name: "A song of ice and fire",
+        },
+      ],
+    }
+  end)
 end

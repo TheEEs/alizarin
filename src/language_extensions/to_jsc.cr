@@ -61,3 +61,15 @@ end
         end
     {% end %}
 {% end %}
+
+# :nodoc:
+struct NamedTuple
+  def to_jsc
+    ret = JSCObject.new
+    self.each do |k, v|
+      value = v.to_jsc
+      ret[k.to_s] = value
+    end
+    ret.to_jsc
+  end
+end
