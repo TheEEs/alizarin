@@ -47,6 +47,8 @@ initialize_extension do
 
   JSCContext.set_value "my_object", object
 
+  puts object.properties
+
   my_birthday_code = new(JSCContext.get_value("Number"), 7498)
 
   JSCContext.set_value "my_birthday_code", my_birthday_code

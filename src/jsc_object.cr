@@ -45,4 +45,16 @@ struct JSCObject
   def define_property(name, value, flags : Accessor::Accessibility)
     JSC.define_property(@value, name, flags, value.to_jsc)
   end
+
+  # Enumerates all properties of this `JSCObject`.
+  def properties
+    props = JSC.properties(@value)
+    ret = [] of String
+    counter = 0
+    while !props[counter].null?
+      ret << String.new(props[counter])
+      counter += 1
+    end
+    ret
+  end
 end
