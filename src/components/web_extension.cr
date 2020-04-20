@@ -71,6 +71,7 @@ module WebExtension
           ::JSCFunction.global_context = %context 
           ::JSCContext.global_context = %context
           {{ yield }}
+          nil
         }), nil, nil, LibWebKit::GtkGConnectFlags::All
       }), nil, nil, LibWebKit::GtkGConnectFlags::All
     end
