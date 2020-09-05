@@ -43,7 +43,7 @@ lib JSC
   fun is_array = jsc_value_is_array(js_value : JSValue) : Bool
   fun new_object = jsc_value_new_object(context : JSContext, instance : Void*, jsc_class : Void*) : JSValue
   fun is_object = jsc_value_is_object(js_value : JSValue) : Bool
-  fun is_instance_of = jsc_value_js_instance_of(js_value : JSValue, name : LibC::Char*) : Bool
+  fun is_instance_of = jsc_value_object_is_instance_of(js_value : JSValue, name : LibC::Char*) : Bool
   fun set_property = jsc_value_object_set_property(js_value : JSValue, name : LibC::Char*, property : JSValue)
   fun get_property = jsc_value_object_get_property(js_value : JSValue, name : LibC::Char*) : JSValue
   fun set_at_index = jsc_value_object_set_property_at_index(js_value : JSValue, index : UInt32, value : JSValue)
