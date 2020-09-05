@@ -64,6 +64,11 @@ module JSObjectUtils
     JSC.is_bool @value
   end
 
+  # JavaScript's `instanceof` operator
+  def is_instance_of?(class_name : String)
+    JSC.is_instance_of(@value, class_name)
+  end
+
   # Converts JavaScript value to Crystal's `Bool`
   def to_b
     JSC.to_bool @value

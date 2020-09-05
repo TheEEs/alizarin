@@ -17,6 +17,8 @@ initialize_extension do
 
   JSCContext.set_value "writeHTMLBodyToFile", func
 
+  puts func.is_instance_of?("Function")
+
   func = function params do
     StaticArray[1, 2, 3, 5]
   end
