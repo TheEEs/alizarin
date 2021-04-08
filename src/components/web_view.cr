@@ -112,7 +112,7 @@ class WebView
   # end
   # ```
   def on_close(&b : Callback)
-    @box = Box.box({self, b})
+    box = Box.box({self, b})
     LibWebKit.connect_signal @browser, "destroy", ->(data1 : Void*, data2 : Void*, data3 : Void*) {
       data = Box({WebView, Callback}).unbox(data1)
       webview = data[0]
@@ -120,7 +120,7 @@ class WebView
       webview.destroy_browser
       webview.close_ipc_socket if webview.ipc?
       callback.call webview
-    }, @box, nil, LibWebKit::GtkGConnectFlags::All
+    }, box, nil, LibWebKit::GtkGConnectFlags::All
   end
 
   # :nodoc:
@@ -228,7 +228,7 @@ class WebView
         res = LibWebKit.script_finish_result object, result, nil
         if res.null?
           puts "JavaScript execution has cause error(s)".colorize(:red).on(:black)
-          return
+          next
         end
         jsc_value = LibWebKit.get_jsc_from_js_result res
         webview = Box(WebView).unbox(user_data)
@@ -253,7 +253,7 @@ class WebView
         res = LibWebKit.script_finish_result object, result, nil
         if res.null?
           puts "JavaScript execution has cause error(s)".colorize(:red).on(:black)
-          return
+          next
         end
         jsc_value = LibWebKit.get_jsc_from_js_result res
         data = Box(JSC::JSValue -> Nil).unbox(user_data)
