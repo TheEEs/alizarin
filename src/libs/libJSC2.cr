@@ -16,8 +16,13 @@ lib JSC
 
   RETURN_TYPE = jsc_value_get_type
 
+  POINTER_TYPE = 17 << 2
+
   alias JSValue = Void*
+  alias JSCClass = Void*
   alias JSFunctionCallback = JSCValues*, Void* -> JSValue
+  alias JSClassMethod = JSValue, JSCValues*, Void* -> JSValue
+  alias JSCDestroyNotifier = Void* -> Nil
 
   alias JSContext = LibWebKit2Extension::WebKitJSContext
 
@@ -75,4 +80,28 @@ lib JSC
   )
   fun eval_js = jsc_context_evaluate(context : JSContext, code : UInt8*, size : LibC::Long) : JSValue
   fun jsc_value_constructor_callv(constructor : JSValue, n_params : UInt32, params : JSValue*) : JSValue
+  fun jsc_register_class = jsc_context_register_class(
+    context : JSContext,
+    name : LibC::Char*,
+    parent : JSCClass,
+    v_table : Void*,
+    finalizer : JSCDestroyNotifier
+  ) : JSCClass
+  fun jsc_class_add_constructor = jsc_class_add_constructor_variadic(
+    class_ : JSCClass,
+    name : LibC::Char*,
+    callback : JSFunctionCallback,
+    user_data : Void*,
+    destroy_notify : JSCDestroyNotifier,
+    return_type : LibC::ULong
+  ) : JSValue
+
+  fun jsc_class_define_method = jsc_class_add_method_variadic(
+    class_ : JSCClass,
+    name : LibC::Char*,
+    callback : JSClassMethod,
+    user_data : Void*,
+    destroy_notify : JSCDestroyNotifier,
+    return_type : LibC::ULong
+  )
 end

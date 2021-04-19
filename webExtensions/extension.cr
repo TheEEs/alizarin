@@ -1,6 +1,19 @@
 require "../src/alizarin"
 include WebExtension
 
+class XAML::MyFileReader < File
+  INSTANCES = [] of Void*
+
+  def self.new(params : Array(JSCFunction | JSCObject | JSCPrimative))
+    File.new(params.first.to_s)
+  end
+
+  @[JSCInstanceMethod]
+  def read_content(params)
+    self.gets_to_end
+  end
+end
+
 initialize_extension do
   IPC.init
 
@@ -78,4 +91,6 @@ initialize_extension do
       ],
     }
   end)
+
+  JSCContext.set_value "MyFileReader", register_class(XAML::MyFileReader)
 end

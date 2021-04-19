@@ -38,6 +38,8 @@
 # 4. `JSCObject`
 # 5. `JSObjectUtils`
 module WebExtension
+
+  annotation JSCInstanceMethod; end
   @@uuid = ""
 
   # :nodoc:
@@ -146,5 +148,52 @@ module WebExtension
     else
       JSCPrimative.new v
     end
+  end
+
+  macro register_class(type)
+    %kclass = JSC.jsc_register_class(
+      JSCContext.global_context,
+      {{type.stringify}},
+      Pointer(Void).null,
+      Pointer(Void).null,
+      ->(instance : Void*){
+        {{type}}::INSTANCES.delete(instance)
+      }
+    )
+
+    %constructor = JSC.jsc_class_add_constructor(
+      %kclass,
+      Pointer(UInt8).null,
+      ->(params : JSC::JSCValues*, user_data : Void*){
+        instance = {{type}}.new JSCFunction.parse_args(params.value)
+        boxed_instance = Box.box(instance)
+        {{type}}::INSTANCES.push(boxed_instance)
+        boxed_instance
+      },
+      Pointer(Void).null,
+      ->(a : Void*){ },
+      JSC::POINTER_TYPE
+    )
+
+    {% for method in type.resolve.methods %}
+      {% if method.annotation(JSCInstanceMethod) %}
+        {% if method.args.size != 1 %}
+          {% raise "method #{type}\##{method.name} must have only one parameter"%}
+        {% end %}
+        JSC.jsc_class_define_method(
+          %kclass,
+          {{method.name.stringify}},
+          ->(this : Void*, params : JSC::JSCValues* , user_data : Void*){
+            unboxed_instance = Box({{type}}).unbox(this)
+            unboxed_instance.{{method.name}}(JSCFunction.parse_args(params.value)).to_jsc
+          },
+          Pointer(Void).null,
+          ->(p : Void*){ },
+          JSC.jsc_value_get_type
+        )
+      {% end %}
+    {% end %}
+
+    %constructor
   end
 end

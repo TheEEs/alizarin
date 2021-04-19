@@ -28,10 +28,11 @@ struct JSCFunction
     box = Box.box(func)
     # @@box_of_fun << box
     @value = JSC.new_function JSCPrimative.global_context,
-      name, ->(p : JSC::JSCValues*, box : Void*) {
-      proc = Box(typeof(func)).unbox box
-      proc.call(JSCFunction.parse_args(p.value)).to_jsc
-    }, box, nil, JSC.jsc_value_get_type
+      name,
+      ->(p : JSC::JSCValues*, box : Void*) {
+        proc = Box(typeof(func)).unbox box
+        proc.call(JSCFunction.parse_args(p.value)).to_jsc
+      }, box, nil, JSC.jsc_value_get_type
   end
 
   # :nodoc:

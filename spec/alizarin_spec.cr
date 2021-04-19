@@ -104,3 +104,14 @@ describe WebView do
     File.exists?(WebView.ipc_socket_file_path(WEBVIEW.uuid.hexstring)).should be_falsey
   end
 end
+
+describe JSCClass do
+  it "works" do
+    eval_js <<-JS
+      var file_reader = new MyFileReader("./LICENSE");
+      file_reader.read_content();
+    JS
+    ret = String.new JSC.to_string script_result
+    ret.should eq File.read("./LICENSE")
+  end
+end
