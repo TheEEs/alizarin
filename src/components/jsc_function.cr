@@ -75,8 +75,8 @@ struct JSCFunction
     end
     ret = JSC.invoke_function @value, args.size, first_arg
     return case JSC
-    when .is_object(ret)   then JSCObject.new ret
     when .is_function(ret) then JSCFunction.new ret
+    when .is_object(ret)   then JSCObject.new ret
     else                        JSCPrimative.new ret
     end
   end
