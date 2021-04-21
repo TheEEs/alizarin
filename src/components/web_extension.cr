@@ -40,6 +40,7 @@
 module WebExtension
 
   annotation JSCInstanceMethod; end
+  annotation Chainable; end
   @@uuid = ""
 
   # :nodoc:
@@ -189,7 +190,11 @@ module WebExtension
           },
           Pointer(Void).null,
           ->(p : Void*){ },
-          JSC.jsc_value_get_type
+          {% unless method.annotation(Chainable) %}
+            JSC.jsc_value_get_type
+          {% else %}
+            JSC::POINTER_TYPE
+          {% end %}
         )
       {% end %}
     {% end %}
