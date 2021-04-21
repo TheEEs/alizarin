@@ -3,7 +3,7 @@
 # Alizarin
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/TheEEs/alizarin?style=flat-square)
 ![LICENSE MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-![CRYSTAL 0.33.0](https://img.shields.io/badge/crystal-0.33.0-orange?style=flat-square)
+![CRYSTAL 1.0.0](https://img.shields.io/badge/crystal-1.0.0-orange?style=flat-square)
 ![webkit2gtk](https://img.shields.io/badge/webkit2gtk-4.0-blue?style=flat-square)
 
 
