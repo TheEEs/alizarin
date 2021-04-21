@@ -14,6 +14,27 @@ class XAML::MyFileReader < File
   end
 end
 
+class Person 
+  INSTANCES = [] of Void* 
+  @name = ""
+
+  def self.new(params)
+    super()
+  end
+
+  @[JSCInstanceMethod]
+  @[Chainable]
+  def set_name(p)
+    @name = p.first.to_s 
+    Box.box(self)
+  end
+
+  @[JSCInstanceMethod]
+  def greet(p)
+    "Hello #{@name}"
+  end
+end
+
 initialize_extension do
   IPC.init
 
@@ -93,4 +114,5 @@ initialize_extension do
   end)
 
   JSCContext.set_value "MyFileReader", register_class(XAML::MyFileReader)
+  JSCContext.set_value "Person", register_class(Person)
 end

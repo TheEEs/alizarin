@@ -105,7 +105,7 @@ describe WebView do
   end
 end
 
-describe JSCClass do
+describe "JSCClass" do
   it "works" do
     eval_js <<-JS
       var file_reader = new MyFileReader("./LICENSE");
@@ -113,5 +113,16 @@ describe JSCClass do
     JS
     ret = String.new JSC.to_string script_result
     ret.should eq File.read("./LICENSE")
+  end
+end
+
+describe WebExtension::Chainable do
+  it "works" do 
+    eval_js <<-JS
+      var me = new Person();
+      me.set_name("TheEEs").greet();
+    JS
+    ret = String.new JSC.to_string script_result
+    ret.should eq "Hello TheEEs"
   end
 end
