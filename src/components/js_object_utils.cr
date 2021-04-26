@@ -34,6 +34,11 @@ module JSObjectUtils
     end
   end
 
+  # Deletes property *name* of the object
+  def delete(name : String)
+    JSC.delete_property(@value, name)
+  end
+
   # Perform type checking
   def is_null?
     JSC.is_null @value
