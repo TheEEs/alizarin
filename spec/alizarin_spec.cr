@@ -117,12 +117,29 @@ describe "JSCClass" do
 end
 
 describe WebExtension::Chainable do
-  it "works" do 
+  it "works" do
     eval_js <<-JS
       var me = new Person();
       me.set_name("TheEEs").greet();
     JS
     ret = String.new JSC.to_string script_result
     ret.should eq "Hello TheEEs"
+  end
+end
+
+describe "async" do
+  it "works" do
+    eval_js <<-JS
+      var result = do_it_later(function(result){
+        window.a = "Hello";
+      });
+    JS
+    script_result
+    sleep 0.4
+    eval_js <<-JS
+      window.a;
+    JS
+    ret = String.new JSC.to_string script_result
+    ret.should eq "Hello"
   end
 end

@@ -14,8 +14,8 @@ class XAML::MyFileReader < File
   end
 end
 
-class Person 
-  INSTANCES = [] of Void* 
+class Person
+  INSTANCES = [] of Void*
   @name = ""
 
   def self.new(params)
@@ -25,7 +25,7 @@ class Person
   @[JSCInstanceMethod]
   @[Chainable]
   def set_name(p)
-    @name = p.first.to_s 
+    @name = p.first.to_s
     Box.box(self)
   end
 
@@ -112,6 +112,19 @@ initialize_extension do
       ],
     }
   end)
+
+  do_it_later = function p do
+    sto = JSCContext.get_value("setTimeout").as(JSCFunction)
+    cb = p.first
+    o = JSCObject.new
+    o["c"] = cb
+    sto.call(
+      function pp do
+        o["c"].as(JSCFunction).call
+      end, 0)
+  end
+
+  JSCContext.set_value "do_it_later", do_it_later
 
   JSCContext.set_value "MyFileReader", register_class(XAML::MyFileReader)
   JSCContext.set_value "Person", register_class(Person)
