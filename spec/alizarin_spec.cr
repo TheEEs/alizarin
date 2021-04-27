@@ -127,7 +127,7 @@ describe WebExtension::Chainable do
   end
 end
 
-describe "async" do
+describe "do_it_later" do
   it "works" do
     eval_js <<-JS
       var result = do_it_later(function(result){
@@ -141,5 +141,23 @@ describe "async" do
     JS
     ret = String.new JSC.to_string script_result
     ret.should eq "Hello"
+  end
+end
+
+describe AsyncTask do
+  it "works" do
+    eval_js <<-JS
+      var promise = read_file_async("./LICENSE",function(content,success){
+        if(success)
+          window.file_content = content;
+      })
+    JS
+    script_result
+    sleep 50
+    eval_js <<-JS
+      window.file_content;
+    JS
+    ret = String.new JSC.to_string script_result
+    ret.should eq File.read("./LICENSE")
   end
 end

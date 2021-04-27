@@ -77,19 +77,19 @@ module WebExtension
           %channel = Channel(Nil).new
           spawn do 
             loop do 
-              #::JSCContext::PromisesQueue.reject! do |promise|
-              #  !promise.state.pending?
-              #end
-              #%channel.send(nil)
+              ::JSCContext::AsyncTasks.reject! do |task|
+                !task.state.pending?
+              end
+              %channel.send(nil)
             end
           end
           %set_interval.call(function params do 
-            #::JSCContext::PromisesQueue.each do |promise|
-            #  unless promise.state.pending?
-            #    promise.callback.call(promise.value, promise.state.resolved?)
-            #  end
-            #end
-            #%channel.receive
+            ::JSCContext::AsyncTasks.each do |task|
+              unless task.state.pending?
+                task.callback.call(task.param, task.state.finished?)
+              end
+            end
+            %channel.receive
           end, 0)
           {{ yield }}
           nil
