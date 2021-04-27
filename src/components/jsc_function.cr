@@ -1,5 +1,5 @@
 # JSCFunction represents a JavaScript's native function(a function that run native code instead of javascript).
-struct JSCFunction
+class JSCFunction
   include JSObjectUtils
   include Invokable
   @this : JSC::JSValue = JSC::JSValue.null
@@ -24,7 +24,7 @@ struct JSCFunction
   #   params.first # => Directly returns function parameter(s) is not recommended and may crash program
   # end
   # ```
-  def initialize(func : Array(JSCPrimative | JSCFunction | JSCObject) -> _, name : String? = nil)
+  def initialize(func : Array(JSCPrimative | JSCFunction | JSCObject) -> _, name : String? = nil, async : Bool = false)
     box = Box.box(func)
     # @@box_of_fun << box
     @value = JSC.new_function JSCPrimative.global_context,

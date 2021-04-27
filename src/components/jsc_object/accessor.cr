@@ -1,4 +1,4 @@
-struct JSCObject
+class JSCObject
   # An `Accessor` represents a JavaScript object's property which is defined via JS `Object.defineProperty`
   # An `Accessor` can define its own setter or getter via `Accessor#get(&block)` and `Accessor#set(&block)`.
   # An `Accessor` can have both setter and getter, either, or even none.

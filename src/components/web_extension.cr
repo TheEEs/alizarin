@@ -38,7 +38,6 @@
 # 4. `JSCObject`
 # 5. `JSObjectUtils`
 module WebExtension
-
   annotation JSCInstanceMethod; end
   annotation Chainable; end
   @@uuid = ""
@@ -73,6 +72,25 @@ module WebExtension
           ::JSCPrimative.global_context = %context
           ::JSCFunction.global_context = %context 
           ::JSCContext.global_context = %context
+          %set_interval = JSCContext.get_value("setInterval").as(JSCFunction)
+          %promise = JSCContext.get_value("Promise")["resolve"].as(JSCFunction)
+          %channel = Channel(Nil).new
+          spawn do 
+            loop do 
+              #::JSCContext::PromisesQueue.reject! do |promise|
+              #  !promise.state.pending?
+              #end
+              #%channel.send(nil)
+            end
+          end
+          %set_interval.call(function params do 
+            #::JSCContext::PromisesQueue.each do |promise|
+            #  unless promise.state.pending?
+            #    promise.callback.call(promise.value, promise.state.resolved?)
+            #  end
+            #end
+            #%channel.receive
+          end, 0)
           {{ yield }}
           nil
         }), nil, nil, LibWebKit::GtkGConnectFlags::All
@@ -95,6 +113,12 @@ module WebExtension
   # end
   # ```
   macro function(arg_name)
+    JSCFunction.new ->({{arg_name}} : Array(JSCPrimative | JSCFunction | JSCObject)) { 
+      {{ yield }}
+    }
+  end
+
+  macro async_function(arg_name)
     JSCFunction.new ->({{arg_name}} : Array(JSCPrimative | JSCFunction | JSCObject)) { 
       {{ yield }}
     }
@@ -179,7 +203,7 @@ module WebExtension
     {% for method in type.resolve.methods %}
       {% if method.annotation(JSCInstanceMethod) %}
         {% if method.args.size != 1 %}
-          {% raise "method #{type}\##{method.name} must have only one parameter"%}
+          {% raise "method #{type}\##{method.name} must have only one parameter" %}
         {% end %}
         JSC.jsc_class_define_method(
           %kclass,

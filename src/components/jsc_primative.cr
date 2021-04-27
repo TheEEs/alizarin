@@ -4,7 +4,7 @@
 # 3. boolean
 # 4. number
 # 5. string
-struct JSCPrimative
+class JSCPrimative
   include JSObjectUtils
   include Invokable
 
@@ -53,5 +53,9 @@ struct JSCPrimative
 
   # :nodoc:
   def initialize(@value : JSC::JSValue)
+  end
+
+  def finalize
+    puts "finalized"
   end
 end

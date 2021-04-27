@@ -1,7 +1,7 @@
 require "./jsc_object/accessor"
 
 # A JSCObject represent a JavaScript object
-struct JSCObject
+class JSCObject
   @value : JSC::JSValue = Pointer(Void).null
 
   include JSObjectUtils
