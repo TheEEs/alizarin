@@ -170,7 +170,6 @@ describe Future do
     ret.should eq File.read("./LICENSE")
   end
 
-
   it "chain of thens works" do
     eval_js <<-JS
       window.returned_value = undefined;
@@ -194,5 +193,3 @@ describe Future do
     ret.should eq File.read("./LICENSE")
   end
 end
-
-

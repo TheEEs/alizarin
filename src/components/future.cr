@@ -59,7 +59,7 @@ class Future < JSCObject
     unless @current_callback_to_be_called > @callback_number
       @sto.call function p do
         cb = self[p.first.to_i32.to_u32].as(JSCFunction)
-        cb.call self["resolved_value"], self["resolve"] , self["reject"]
+        cb.call self["resolved_value"], self["resolve"], self["reject"]
         @current_callback_to_be_called += 1
         next_callback
       end, 0, @current_callback_to_be_called
