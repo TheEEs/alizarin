@@ -154,10 +154,34 @@ describe Future do
       var future = new Future(function(resolve,reject){
         var file_reader = new MyFileReader("./LICENSE");
         resolve(file_reader.read_content());
-      }).then(function(file_content, reject){
+      }).then(function(file_content, resolve, reject){
         reject(file_content);
       }).catch(function(value){
         window.returned_value = value;
+      });
+      true;
+    JS
+    script_result
+    sleep 0.5
+    eval_js <<-JS
+      window.returned_value;
+    JS
+    ret = String.new JSC.to_string script_result
+    ret.should eq File.read("./LICENSE")
+  end
+
+
+  it "chain of thens works" do
+    eval_js <<-JS
+      window.returned_value = undefined;
+      var future = new Future(function(resolve,reject){
+        var file_reader = new MyFileReader("./LICENSE");
+        resolve(file_reader.read_content());
+      }).then(function(file_content, resolve, reject){
+        resolve(file_content);
+      }).then(function(file_content){
+        console.log(file_content);
+        window.returned_value = file_content;
       });
       true;
     JS
