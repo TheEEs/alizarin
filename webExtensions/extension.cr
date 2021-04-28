@@ -113,34 +113,6 @@ initialize_extension do
     }
   end)
 
-  do_it_later = function p do
-    sto = JSCContext.get_value("setTimeout").as(JSCFunction)
-    cb = p.first
-    o = JSCObject.new
-    o["c"] = cb
-    sto.call(
-      function pp do
-        o["c"].as(JSCFunction).call
-      end, 0)
-  end
-
-  JSCContext.set_value "do_it_later", do_it_later
-
-
-  read_file_async = function p do 
-    file_path = p.first.to_s 
-    callback = p[1].as(JSCFunction)
-    t = AsyncTask.new callback
-    JSCContext::AsyncTasks.push t 
-    spawn do 
-      t.resolve File.read(file_path)
-    end
-    Fiber.yield
-    true
-  end
-
-  JSCContext.set_value "read_file_async", read_file_async
-
   JSCContext.set_value "MyFileReader", register_class(XAML::MyFileReader)
   JSCContext.set_value "Person", register_class(Person)
 end

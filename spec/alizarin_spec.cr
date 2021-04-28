@@ -127,37 +127,48 @@ describe WebExtension::Chainable do
   end
 end
 
-describe "do_it_later" do
-  it "works" do
+describe Future do
+  it "thenable works" do
     eval_js <<-JS
-      var result = do_it_later(function(result){
-        window.a = "Hello";
+      var future = new Future(function(resolve,reject){
+        var file_reader = new MyFileReader("./LICENSE");
+        resolve(file_reader.read_content());
+      }).then((value)=>{
+        console.log(value);
+        window.returned_value = value;
       });
+      true;
     JS
     script_result
-    sleep 0.4
+    sleep 0.5
     eval_js <<-JS
-      window.a;
+      window.returned_value;
     JS
     ret = String.new JSC.to_string script_result
-    ret.should eq "Hello"
+    ret.should eq File.read("./LICENSE")
   end
-end
 
-describe AsyncTask do
-  it "works" do
+  it "catch works" do
     eval_js <<-JS
-      var promise = read_file_async("./LICENSE",function(content,success){
-        if(success)
-          window.file_content = content;
-      })
+      window.returned_value = undefined;
+      var future = new Future(function(resolve,reject){
+        var file_reader = new MyFileReader("./LICENSE");
+        resolve(file_reader.read_content());
+      }).then(function(file_content, reject){
+        reject(file_content);
+      }).catch(function(value){
+        window.returned_value = value;
+      });
+      true;
     JS
     script_result
-    sleep 50
+    sleep 0.5
     eval_js <<-JS
-      window.file_content;
+      window.returned_value;
     JS
     ret = String.new JSC.to_string script_result
     ret.should eq File.read("./LICENSE")
   end
 end
+
+

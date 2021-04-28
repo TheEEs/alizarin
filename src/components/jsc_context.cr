@@ -1,7 +1,6 @@
 # JSCContext represents a JavaScript execution context
 module JSCContext
   @@context : LibWebKit2Extension::WebKitJSContext = Pointer(Void).null
-  AsyncTasks = [] of AsyncTask
 
   # :nodoc:
   def self.global_context=(ctx : LibWebKit2Extension::WebKitJSContext)

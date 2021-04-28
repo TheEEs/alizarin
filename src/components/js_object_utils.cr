@@ -24,7 +24,7 @@ module JSObjectUtils
 
   # Gets value at index `index`
   def [](index : UInt32)
-    v = JSc.get_at_index @value, index
+    v = JSC.get_at_index @value, index
     if JSC.is_function(v)
       JSCFunction.new v
     elsif JSC.is_object(v)

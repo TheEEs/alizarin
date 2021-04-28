@@ -72,25 +72,7 @@ module WebExtension
           ::JSCPrimative.global_context = %context
           ::JSCFunction.global_context = %context 
           ::JSCContext.global_context = %context
-          %set_interval = JSCContext.get_value("setInterval").as(JSCFunction)
-          %promise = JSCContext.get_value("Promise")["resolve"].as(JSCFunction)
-          %channel = Channel(Nil).new
-          spawn do 
-            loop do 
-              ::JSCContext::AsyncTasks.reject! do |task|
-                !task.state.pending?
-              end
-              %channel.send(nil)
-            end
-          end
-          %set_interval.call(function params do 
-            ::JSCContext::AsyncTasks.each do |task|
-              unless task.state.pending?
-                task.callback.call(task.param, task.state.finished?)
-              end
-            end
-            %channel.receive
-          end, 0)
+          ::JSCContext.set_value "Future", register_class(Future)
           {{ yield }}
           nil
         }), nil, nil, LibWebKit::GtkGConnectFlags::All
@@ -210,7 +192,12 @@ module WebExtension
           {{method.name.stringify}},
           ->(this : Void*, params : JSC::JSCValues* , user_data : Void*){
             unboxed_instance = Box({{type}}).unbox(this)
-            unboxed_instance.{{method.name}}(JSCFunction.parse_args(params.value)).to_jsc
+            %ret = unboxed_instance.{{method.name}}(JSCFunction.parse_args(params.value))
+            {% if method.annotation(Chainable) %}
+              this
+            {% else %}
+              %ret.to_jsc
+            {% end %}
           },
           Pointer(Void).null,
           ->(p : Void*){ },
