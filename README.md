@@ -1,5 +1,3 @@
-![alizarin.png](https://www.upsieutoc.com/images/2020/03/29/alizarin.png)
-
 # Alizarin
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/TheEEs/alizarin?style=flat-square)
 ![LICENSE MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)
@@ -46,7 +44,7 @@ require "alizarin"
     exit 0
   end
 
-  webview.default_size 800, 600
+  webview.window_size 800, 600
   webview.load_url "https://crystal-lang.org/
 
   webview.run
@@ -86,6 +84,6 @@ TODO: Write Development instructions here.
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
 
-## Contributors
+## Author
 
 - [TheEEs](https://github.com/TheEEs) - creator and maintainer
