@@ -39,6 +39,7 @@
 # 5. `JSObjectUtils`
 module WebExtension
   annotation JSCInstanceMethod; end
+  # See `JSCInstanceMethod`.
   annotation Chainable; end
   @@uuid = ""
 
@@ -100,12 +101,6 @@ module WebExtension
     }
   end
 
-  macro async_function(arg_name)
-    JSCFunction.new ->({{arg_name}} : Array(JSCPrimative | JSCFunction | JSCObject)) { 
-      {{ yield }}
-    }
-  end
-
   # JavaScript `undefined`
   macro undefined
     JSCPrimative.new 
@@ -157,6 +152,29 @@ module WebExtension
     end
   end
 
+  #Exposes a Crystal's Class so it can be used in JavaScript
+  #
+  # * webextension.cr:
+  # ```crystal
+  # class File
+  #   def initialize(p : [] of (JSCFunction | JSCObject | JSCPrimative))
+  #     super(p.first.to_s)
+  #   end 
+  #   
+  #   @[JSCInstanceMethod]
+  #   def content(p)
+  #     self.seek(0)
+  #     self.gets_to_end
+  #   end
+  # end
+  # JSCContext.set_value "File", WebExtension.register_class(File)
+  # 
+  # ```
+  # * index.js
+  # ```js
+  # var content = new File("./LICENSE").content();
+  # ```
+  # See more at `JSCInstanceMethod`.
   macro register_class(type)
     %kclass = JSC.jsc_register_class(
       JSCContext.global_context,
