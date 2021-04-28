@@ -192,4 +192,26 @@ describe Future do
     ret = String.new JSC.to_string script_result
     ret.should eq File.read("./LICENSE")
   end
+
+  it "when a then does not resolve a value, the next then (if any) receives undefined as resolved_value" do
+    eval_js <<-JS
+      window.returned_value = undefined;
+      var future = new Future(function(resolve,reject){
+        var file_reader = new MyFileReader("./LICENSE");
+        resolve(file_reader.read_content());
+      }).then(function(file_content, resolve, reject){
+        //resolve(file_content);
+      }).then(function(file_content){
+        window.returned_value = file_content;
+      });
+      true;
+    JS
+    script_result
+    sleep 0.5
+    eval_js <<-JS
+      window.returned_value;
+    JS
+    ret = String.new JSC.to_string script_result
+    ret.should eq "undefined"
+  end
 end
