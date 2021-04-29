@@ -69,6 +69,24 @@ class Future < JSCObject
     end, 0, @callback_number
   end
 
+  @[JSCInstanceMethod]
+  @[Chainable]
+  def resolve(p)
+    expects_n_params 1
+    @resolved = true
+    self["resolved_value"] = p.first.to_jsc
+    next_callback
+  end
+
+  @[JSCInstanceMethod]
+  @[Chainable]
+  def reject(p)
+    expects_n_params 1
+    self["rejected_value"] = p.first.to_jsc
+    @rejected = true
+    next_callback
+  end
+
   def next_callback
     if @rejected
       catch = self["catch"]
@@ -77,6 +95,7 @@ class Future < JSCObject
       end
       return
     end
+    return if !@resolved
     unless @current_callback_to_be_called > @callback_number
       @resolved = false
       resolved_value = self["resolved_value"]
