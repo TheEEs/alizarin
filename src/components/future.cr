@@ -1,6 +1,25 @@
 require "./*"
 include WebExtension
 
+# `Future` is a Promise-like native extension. It provides another option to developers by which
+# they can organize their asynchronous code better without worring about callback hells or writing to much
+# Crystal code to handle async tasks in JS.
+#
+# 1. extension.cr
+# ```
+# require "alizarin"
+# include WebExtension
+# initialize_extension do
+#   read_file_async = function p do
+#     file_path = p.first.to_s
+#     new JSCContext.get_value("Future"), (function p do
+#       resolve = p.first.as(JSCFunction)
+#       resolve.call File.read(file_path)
+#     end)
+#   end
+#   JSCContext.set_value "read_file_async", read_file_async
+# end
+# ```
 class Future < JSCObject
   macro expects_a_callback
     unless JSC.is_function(p.first)
@@ -22,6 +41,7 @@ class Future < JSCObject
   @current_callback_to_be_called = 1_u32
   @callback_number = 0_u32
   @rejected = false
+  @resolve = false
 
   def initialize(p)
     expects_n_params 1
@@ -30,6 +50,7 @@ class Future < JSCObject
 
     self["resolve"] = function p do
       expects_n_params 1
+      @resolved = true
       self["resolved_value"] = p.first.to_jsc
     end
 
@@ -57,6 +78,7 @@ class Future < JSCObject
       return
     end
     unless @current_callback_to_be_called > @callback_number
+      @resolved = false
       resolved_value = self["resolved_value"]
       self["resolved_value"] = undefined
       @sto.call function p do
@@ -75,6 +97,9 @@ class Future < JSCObject
     expects_a_callback
     @callback_number += 1
     self[@callback_number] = p.first
+    if @resolved
+      next_callback
+    end
   end
 
   @[JSCInstanceMethod]
