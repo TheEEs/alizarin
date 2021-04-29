@@ -1,3 +1,5 @@
+require "./web_extension/**"
+
 # According to architecture of WebKit2GTK, JavaScript code runs in a separeted process called Render Process.
 # That's why extending JavaScript can not be done in the same process which manages the `WebView`.
 # Instead WebKit2GTK proposes a new way to extend JavaScript with native code called WebExtension.
@@ -38,9 +40,6 @@
 # 4. `JSCObject`
 # 5. `JSObjectUtils`
 module WebExtension
-  annotation JSCInstanceMethod; end
-  # See `JSCInstanceMethod`.
-  annotation Chainable; end
   @@uuid = ""
 
   # :nodoc:
@@ -152,15 +151,16 @@ module WebExtension
     end
   end
 
-  #Exposes a Crystal's Class so it can be used in JavaScript
+  # Exposes a Crystal's Class so it can be used in JavaScript
   #
+  # Example:
   # * webextension.cr:
-  # ```crystal
+  # ```
   # class File
   #   def initialize(p : [] of (JSCFunction | JSCObject | JSCPrimative))
   #     super(p.first.to_s)
-  #   end 
-  #   
+  #   end
+  #
   #   @[JSCInstanceMethod]
   #   def content(p)
   #     self.seek(0)
@@ -168,7 +168,7 @@ module WebExtension
   #   end
   # end
   # JSCContext.set_value "File", WebExtension.register_class(File)
-  # 
+  #
   # ```
   # * index.js
   # ```js

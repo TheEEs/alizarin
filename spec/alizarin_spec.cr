@@ -193,7 +193,7 @@ describe Future do
     ret.should eq File.read("./LICENSE")
   end
 
-  it "when a then does not resolve a value, the next then (if any) receives undefined as resolved_value" do
+  it "if a then does not resolve , later callbacks will not be executed" do
     eval_js <<-JS
       window.returned_value = undefined;
       var future = new Future(function(resolve,reject){
