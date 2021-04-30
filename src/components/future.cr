@@ -5,6 +5,7 @@ include WebExtension
 # they can organize their asynchronous code better without worring about callback hells or writing to much
 # Crystal code to handle async tasks in JS.
 #
+# We can use it directly in Crystal ...
 # 1. extension.cr
 # ```
 # require "alizarin"
@@ -20,7 +21,21 @@ include WebExtension
 #   JSCContext.set_value "read_file_async", read_file_async
 # end
 # ```
+# ... or in JavaScript
+#
+# ```
+# var future = new Future((resolve, reject)=>{
+#   resolve("World");
+# });
+# future.then((value,resolve,reject)=>{
+#   console.log(`Hello {value}`);  //note that you must resolve this callback, otherwise....
+# }).then((value)=>{
+#   //.... this callback will not be executed
+# });
+# ```
+# NOTE: Be sure to call `Future#resolve` or `Future#reject` inside each callback, otherwise your later callbacks will not run.
 class Future < JSCObject
+  # :nodoc:
   macro expects_a_callback
     unless JSC.is_function(p.first)
         JSCFunction.raise "Expect a function(resolve,reject)."
@@ -28,6 +43,7 @@ class Future < JSCObject
     end
   end
 
+  # :nodoc:
   macro expects_n_params(n)
     if p.size != {{n}}
         JSCFunction.raise "Expect {{n}} param(s), #{p.size} given." 
@@ -35,7 +51,8 @@ class Future < JSCObject
     end
   end
 
-  INSTANCES = [] of JSC::JSValue
+  # :nodoc:
+  include JSCClass
 
   @sto = JSCContext.get_value("setTimeout").as(JSCFunction)
   @current_callback_to_be_called = 1_u32
@@ -43,12 +60,17 @@ class Future < JSCObject
   @rejected = false
   @resolve = false
 
+  # :nodoc:
   def initialize(p)
     expects_n_params 1
     expects_a_callback
     super()
 
     self["resolve"] = function p do
+      if @rejected
+        JSCFunction.raise "Future is already rejected!"
+        return
+      end
       expects_n_params 1
       @resolved = true
       self["resolved_value"] = p.first.to_jsc
@@ -69,15 +91,57 @@ class Future < JSCObject
     end, 0, @callback_number
   end
 
+  # Resolves a callback.
+  #
+  # This method is the same with the one passed as the second parameter of each *then*'s callback.
+  # Let's see the following example:
+  # ```
+  # var f = new Future((resolve, reject)=>{
+  #   // do nothing
+  # }).then(value => {
+  #     console.log("Hello");
+  #     // this callback will not be called because the callback above it did not resolve.
+  # });
+  # // To get the later callback running, we can invoke method `f.resolve`, e.g:
+  # f.resolve(1);
+  # ```
+  # > Output: Hello
   @[JSCInstanceMethod]
   @[Chainable]
   def resolve(p)
+    if @rejected
+      JSCFunction.raise "Future is already rejected!"
+      return
+    end
     expects_n_params 1
     @resolved = true
     self["resolved_value"] = p.first.to_jsc
     next_callback
   end
 
+  # Reject the `Future`.
+  #
+  # This method is the same with the one passed as the third parameter of each *then*'s callback.
+  # When a callback call `reject`, all other then will be skip over and the callback passed to `Future#catch` will be executed.
+  # Let's see the following example:
+  # ```
+  # var f = new Future((resolve, reject)=>{
+  #   try{
+  #     throw "Oops!";
+  #   }
+  #   catch{
+  #     reject("Future rejected!");   
+  #   }
+  # }).then(value => {
+  #     console.log("Hello");
+  #     // this callback will not be called because this `Future` is rejected!
+  # }).catch((msg)=>{
+  #   console.log(`Rejected message {msg}`)  
+  # });
+  # // To get the later callback running, we can invoke method `f.resolve`, e.g:
+  # f.resolve(1);
+  # ```
+  # > Output: Hello
   @[JSCInstanceMethod]
   @[Chainable]
   def reject(p)
