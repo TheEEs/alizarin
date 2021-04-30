@@ -214,4 +214,29 @@ describe Future do
     ret = String.new JSC.to_string script_result
     ret.should eq "undefined"
   end
+
+  it "A future can not resolve after it was rejected" do
+    eval_js <<-JS
+      window.returned_value = undefined;
+      var future = new Future(function(resolve,reject){
+        reject("Oops!");
+      }).then(function(file_content, resolve, reject){
+        //resolve(file_content);
+      }).catch(function(file_content){
+        try{
+          future.resolve(1);
+        }catch{
+          window.returned_value = "Cannot resolve this Future";
+        }
+      });
+      true;
+    JS
+    script_result
+    sleep 0.5
+    eval_js <<-JS
+      window.returned_value;
+    JS
+    ret = String.new JSC.to_string script_result
+    ret.should eq "Cannot resolve this Future"
+  end
 end
