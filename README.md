@@ -39,13 +39,13 @@ require "alizarin"
 
   webview = WebView.new 
 
-  webview.on_close |webview|
+  webview.on_close do |webview|
     puts "#{webview} is going to close".colorize :green
     exit 0
   end
 
   webview.window_size 800, 600
-  webview.load_url "https://crystal-lang.org/
+  webview.load_url "https://crystal-lang.org/"
 
   webview.run
 
