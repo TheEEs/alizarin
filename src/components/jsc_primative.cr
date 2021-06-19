@@ -56,6 +56,6 @@ class JSCPrimative
   end
 
   def finalize
-    puts "finalized"
+    puts "JSCPrimative #{self.object_id} is garbage collected"
   end
 end

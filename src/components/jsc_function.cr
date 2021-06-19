@@ -97,7 +97,7 @@ class JSCFunction
   end
 
   def finalize
-    puts "Function Finalized"
+    puts "JSCFunction #{self.object_id} is garbage collected"
   end
 
   

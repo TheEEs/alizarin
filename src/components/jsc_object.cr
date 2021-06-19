@@ -57,4 +57,8 @@ class JSCObject
     end
     ret
   end
+
+  def finalize
+    puts "JSCObject #{self.object_id} is garbage collected"
+  end
 end
