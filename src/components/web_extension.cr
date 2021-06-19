@@ -72,7 +72,6 @@ module WebExtension
           ::JSCPrimative.global_context = %context
           ::JSCFunction.global_context = %context 
           ::JSCContext.global_context = %context
-          ::JSCContext.set_value "Future", register_class(Future)
           {{ yield }}
           nil
         }), nil, nil, LibWebKit::GtkGConnectFlags::All
