@@ -1,11 +1,15 @@
 # JSCFunction represents a JavaScript's native function(a function that run native code instead of javascript).
 class JSCFunction
+
+  FUNCTIONS = [] of  JSCFunction
+
   include JSObjectUtils
   include Invokable
   @this : JSC::JSValue = JSC::JSValue.null
   @name : String? = nil
   @@global_context : LibWebKit2Extension::WebKitJSContext = Pointer(Void).null
   @box : Pointer(Void) = Pointer(Void).null
+  
   alias CallBack = Array(JSCPrimative | JSCFunction | JSCObject) -> JSCFunction | JSCPrimative | JSCObject
 
   # #@@box_of_fun = Array(Void*).new
@@ -24,7 +28,7 @@ class JSCFunction
   #   params.first # => Directly returns function parameter(s) is not recommended and may crash program
   # end
   # ```
-  def initialize(func : Array(JSCPrimative | JSCFunction | JSCObject) -> _, name : String? = nil, async : Bool = false)
+  def initialize(func : Array(JSCPrimative | JSCFunction | JSCObject) -> _, name : String? = nil, auto_save : Bool = true)
     @box = Box.box(func)
     # @@box_of_fun << box
     @value = JSC.new_function JSCPrimative.global_context,
@@ -33,6 +37,7 @@ class JSCFunction
         proc = Box(typeof(func)).unbox box
         proc.call(JSCFunction.parse_args(p.value)).to_jsc
       }, @box, nil, JSC.jsc_value_get_type
+    JSCFunction::FUNCTIONS.push(self) if auto_save
   end
 
   # :nodoc:
