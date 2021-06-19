@@ -5,7 +5,7 @@ class JSCFunction
   @this : JSC::JSValue = JSC::JSValue.null
   @name : String? = nil
   @@global_context : LibWebKit2Extension::WebKitJSContext = Pointer(Void).null
-
+  @box : Pointer(Void) = Pointer(Void).null
   alias CallBack = Array(JSCPrimative | JSCFunction | JSCObject) -> JSCFunction | JSCPrimative | JSCObject
 
   # #@@box_of_fun = Array(Void*).new
@@ -25,14 +25,14 @@ class JSCFunction
   # end
   # ```
   def initialize(func : Array(JSCPrimative | JSCFunction | JSCObject) -> _, name : String? = nil, async : Bool = false)
-    box = Box.box(func)
+    @box = Box.box(func)
     # @@box_of_fun << box
     @value = JSC.new_function JSCPrimative.global_context,
       name,
       ->(p : JSC::JSCValues*, box : Void*) {
         proc = Box(typeof(func)).unbox box
         proc.call(JSCFunction.parse_args(p.value)).to_jsc
-      }, box, nil, JSC.jsc_value_get_type
+      }, @box, nil, JSC.jsc_value_get_type
   end
 
   # :nodoc:
@@ -95,4 +95,10 @@ class JSCFunction
   def self.current_context
     JSC.current_js_context
   end
+
+  def finalize
+    puts "Function Finalized"
+  end
+
+  
 end
