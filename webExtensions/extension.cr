@@ -1,5 +1,6 @@
 require "../src/alizarin"
 include WebExtension
+include StdLib
 
 class XAML::MyFileReader < File
   INSTANCES = [] of Void*
@@ -11,6 +12,16 @@ class XAML::MyFileReader < File
   @[JSCInstanceMethod]
   def read_content(params)
     self.gets_to_end
+  end
+
+  @[JSCInstanceMethod]
+  def read_content_async(p)
+    task = WebExtension.new Task.constructor, nil
+    t = Task.last_created_instance
+    spawn do
+      t.send self.gets_to_end
+    end
+    task
   end
 end
 
