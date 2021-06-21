@@ -13,17 +13,7 @@ class StdLib::Task < Channel(JSCTypes)
     super(p.to_jsc)
     true
   end
-
-  @[JSCInstanceMethod]
-  def wait(p)
-    while true
-      i, m = Channel.non_blocking_select(self.receive_select_action)
-      if m.is_a?(JSCTypes)
-        return m 
-      end
-    end
-  end
-
+  
   @[JSCInstanceMethod]
   def await(p)
     select
