@@ -1,3 +1,4 @@
+require "./web_extension/stdlib/jsc_class"
 require "./web_extension/**"
 
 # According to architecture of WebKit2GTK, JavaScript code runs in a separeted process called Render Process.
@@ -25,7 +26,7 @@ require "./web_extension/**"
 # ```
 # Builds shared library:
 # ```bash
-# $ crystal build --single-module --link-flags="-shared -fpic" -o <output-path> <source-file>
+# $ crystal build -Dpreview_mt --single-module --link-flags="-shared -fpic" -o <output-path> <source-file>
 # ```
 # NOTE: The shared library should be placed in the directory provided with `WebView#extension_dir=`
 #
@@ -72,6 +73,9 @@ module WebExtension
           ::JSCPrimative.global_context = %context
           ::JSCFunction.global_context = %context 
           ::JSCContext.global_context = %context
+          {% for cls in JSCClass.resolve.includers %}
+            ::JSCContext.set_value {{cls}}.name, {{cls}}.constructor
+          {% end %}
           {{ yield }}
           nil
         }), nil, nil, LibWebKit::GtkGConnectFlags::All
@@ -156,6 +160,7 @@ module WebExtension
   # * webextension.cr:
   # ```
   # class File
+  #   INSTANCES = [] of Void*
   #   def initialize(p : [] of (JSCFunction | JSCObject | JSCPrimative))
   #     super(p.first.to_s)
   #   end
@@ -173,7 +178,7 @@ module WebExtension
   # ```js
   # var content = new File("./LICENSE").content();
   # ```
-  # See more at `JSCInstanceMethod`.
+  # See more at `JSCClass`.
   macro register_class(type)
     %kclass = JSC.jsc_register_class(
       JSCContext.global_context,
